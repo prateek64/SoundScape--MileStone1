@@ -23,6 +23,8 @@ Some Features of the current system :
 
 4. Mic input rms value can move the sources around in 3D. 
 
+5. You can pitch shift each midi note using a midi control knob.(void Audio_Scene_Creator::pitch_shifting(int val))
+
 Coming Up 
 
 1. Granular Synthesis and some real time FM synthesis
