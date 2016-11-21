@@ -7,7 +7,7 @@ a. OpenAL SOft (https://github.com/kcat/openal-soft)
 
 b. OpenAL (https://www.openal.org/)
 
-c. ofxMIDI
+c. ofxMIDI (https://github.com/danomatika/ofxMidi)
 
 d. HRTF's from IRCAM  (http://recherche.ircam.fr/equipes/salles/listen/)
 
