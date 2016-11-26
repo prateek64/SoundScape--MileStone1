@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\pgmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\ios</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include;%(AdditionalIncludeDirectories);src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\pgmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\ios</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -123,8 +123,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\libs\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -157,7 +157,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\pgmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\ios</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include;%(AdditionalIncludeDirectories);src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\pgmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop;..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\ios</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -167,8 +167,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\libs\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -186,6 +186,7 @@
     <ClCompile Include="..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi\RtMidi.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AudioThread.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="src\Audio_Scene_Creator.h" />
     <ClInclude Include="..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop\ofxRtMidiIn.h" />

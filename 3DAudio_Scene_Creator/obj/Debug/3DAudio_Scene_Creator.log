@@ -1,18 +1,21 @@
 ﻿  Audio_Scene_Creator.cpp
   main.cpp
   ofApp.cpp
-src\Audio_Scene_Creator.cpp(63): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(74): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+src\Audio_Scene_Creator.cpp(68): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(79): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-src\Audio_Scene_Creator.cpp(97): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(98): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(107): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(124): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(133): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(150): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
-src\Audio_Scene_Creator.cpp(192): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
-src\ofApp.cpp(108): warning C4101: 'y': unreferenced local variable
-src\ofApp.cpp(108): warning C4101: 'x': unreferenced local variable
+src\Audio_Scene_Creator.cpp(102): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(103): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(112): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(129): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(138): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(155): warning C4244: 'argument': conversion from 'double' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(275): warning C4244: 'argument': conversion from 'int' to 'ALfloat', possible loss of data
+src\Audio_Scene_Creator.cpp(396): warning C4101: 'state': unreferenced local variable
+c:\users\pmurgai\desktop\quarter-1\256a\final_project\3daudio_scene_creator\src\audio_scene_creator.cpp(424): warning C4715: 'Audio_Scene_Creator::add_effects': not all control paths return a value
+src\ofApp.cpp(131): warning C4101: 'y': unreferenced local variable
+src\ofApp.cpp(131): warning C4101: 'x': unreferenced local variable
+     Creating library bin\3DAudio_Scene_Creator_debug.lib and object bin\3DAudio_Scene_Creator_debug.exp
   3DAudio_Scene_Creator.vcxproj -> C:\Users\pmurgai\Desktop\Quarter-1\256A\Final_Project\3DAudio_Scene_Creator\bin\3DAudio_Scene_Creator_debug.exe
   3DAudio_Scene_Creator.vcxproj -> bin\3DAudio_Scene_Creator_debug.pdb (Full PDB)
   

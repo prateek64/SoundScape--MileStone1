@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "Audio_Scene_Creator.h"
 #include "ofxMidi.h"
+#include "AudioThread.h"
 
 class ofApp : public ofBaseApp, public ofxMidiListener {
 
@@ -30,7 +31,7 @@ public:
 	void midiSetup();
 
 
-	void gui_layout();
+	void draw_ambient_listener();
 	void file_init();
 
 	// bool convolve1D(double conv_buf[256], int dataSize, int kernelSize);
@@ -43,9 +44,8 @@ public:
 
 	void move_drums();
 	void displace_listener();
-	void draw_songs();
+	void draw_environments();
 //	void ofApp::audioOut(float * out, int bufferSize, int nChannels);
-
 
 
 private:
@@ -54,15 +54,21 @@ private:
 	int border_len = 80 ;
 
 	int buffersize = 256;
+	int circle_width = 90;
+	int circle_height = 90;
 
-
+	int ambient_env_radius = 100;
 	ofImage mic_off;
 	ofImage alien;
 	ofImage mic_on;
 	ofImage road;
 	ofImage song[2];
+	ofImage real_time_audio;
 
-	double death_star_angle = 2.5; 
+	ofImage acoustic_env[4];
+
+	double death_star_angle = 0.0; 
+	double image_rotate = 0.0;
 	bool draw_mic_on = false;
 	bool draw_mic_off = true;
 	bool is_mic_on = false;
@@ -72,14 +78,15 @@ private:
 	vector <float> left;
 	vector< vector<float> > leftHistory;
 
+	int number_of_sources = 17;
 	double*output;
 	double phase = 0;
-	double drum_pos_x[11];
-	double drum_pos_y[11];
-	double drum_pos_z[11];
+	double drum_pos_x[17];
+	double drum_pos_y[17];
+	double drum_pos_z[17];
 
-	double change_pos_x[11] = { 3,2,1,4,1,1,6,2,3,5,4 };
-	double change_pos_y[11] = { 3,-2,1,+4,1,+1,-6,2,3,5,-4 };
+	double change_pos_x[17] = { 13,12,13,14,13,13,16,12,13,15,14, 12, 8, 10, 2.5,6,3 };
+	double change_pos_y[17] = { 3,12,10.9,4,10,10,16,2,3,5,14,10,9,8.5,12.5,9.7,10 };
 	double change_pos_z[11] = { 12,12,12,12,12,12,12,12,12,12,12 };
 	double radius_of_rev = 500;
 
@@ -94,21 +101,18 @@ private:
 	double theta = 0;
 
 	float smoothedVol = 0;
-	float scaledVol = 1;
+	float scaledVol = 0.08;
+	
 
-//	stk::FileWvIn impulse;
-
-//	stk::FileWvIn input;
-//	stk::FileWvOut outpt_file;
-	bool convolve;
-	bool dragged[11];
+	bool dragged[17];
 	Audio_Scene_Creator create_sounds;
 
-	ofImage drumkit_parts[11];
+	ofImage drumkit_parts[17];
 
-	ofPoint drum_kit[11];
+	ofPoint drum_kit[17];
 	ofPoint point_listener;
-
+	ofPoint ambient_environment;
+	ofSpherePrimitive song_sphere[2];
 
 	vector<ofPoint> vertices;
 	vector<ofColor> colors;
@@ -124,5 +128,14 @@ private:
 	ofxMidiMessage midiMessage;
 
 	ofSoundStream sound_stream;
+
+    AudioThread audio_thread;
 	
+	ofMutex lock;
+
+	// Variables for Real Time Audio Processing 
+
 };
+
+
+
