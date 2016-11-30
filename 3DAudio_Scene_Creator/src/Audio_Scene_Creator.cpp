@@ -30,15 +30,15 @@ Audio_Scene_Creator::Audio_Scene_Creator()
 	}
 
 	source_counter = 0;
-	// listner_location();
+
 	subx = suby = subz = 10;
 	file_names();
 	listener_x = 0;
 	listener_y = 0;
 	listener_z = 0;
-
 	
-	
+	real_time_reverb_array();
+	add_real_time_effects();
 }
 
 
@@ -49,6 +49,7 @@ Audio_Scene_Creator::~Audio_Scene_Creator()
 		alDeleteSources(1, &source[i]);
 		alDeleteBuffers(1, &buffer[i]);
 	}
+
 	alcDestroyContext(context);
 	
 	for (int i = 0; i < 1; i++) {
@@ -56,11 +57,13 @@ Audio_Scene_Creator::~Audio_Scene_Creator()
 		alcCloseDevice(device[i]);
 	}
 
-	
+/*	for (int i = 0; i < 3; i++) {
+
+		alDeleteAuxiliaryEffectSlots(1, &slot[i]);
+		alDeleteEffects(1, &effect[i]);
+		cout << "Deleted Effects" << endl;
+	}  */
 }
-
-
-using namespace std;
 
 
 void Audio_Scene_Creator::listner_location() {
@@ -155,18 +158,17 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 
 	alSource3f(source[which_source], AL_POSITION, X, Y, Z);
 	alSource3f(source[which_source], AL_VELOCITY, 0., 0., 0.);
-	alSourcei(source[which_source], AL_LOOPING, AL_FALSE);
+	if (which_source < 17) {
+
+		alSourcei(source[which_source], AL_LOOPING, AL_FALSE);
+	}
+
 	alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
 	alSourcef(source[which_source], AL_ROLLOFF_FACTOR,13);
-	alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 300);
-	alSourcef(source[which_source], AL_MAX_DISTANCE, 700);
+	alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 500);
+	alSourcef(source[which_source], AL_MAX_DISTANCE, 900);
 
 	
-
-
-	//	alSpeedOfSound(200);
-	//	alDopplerFactor(3); 
-
 	/* allocate an OpenAL buffer and fill it with monaural sample data */
 	
 	alGenBuffers(1, &buffer[which_source]);
@@ -182,14 +184,40 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 
 	alSourcei(source[which_source], AL_BUFFER, buffer[which_source]);
 
-//	alSourcePlay(source[source_counter]);
-
 	source_counter++;
 
 }
 
+void Audio_Scene_Creator::delete_sources() {
 
-   void Audio_Scene_Creator::real_time_proc() {
+
+
+
+}
+void Audio_Scene_Creator::reverb_array() {
+
+
+	reverb[0] = EFX_REVERB_PRESET_DOME_SAINTPAULS;
+	reverb[1] = EFX_REVERB_PRESET_UNDERWATER;
+	reverb[2] = EFX_REVERB_PRESET_AUDITORIUM;
+	reverb[3] = EFX_REVERB_PRESET_PSYCHOTIC;
+}
+
+void Audio_Scene_Creator::real_time_reverb_array() {
+
+	real_time_reverb[0] = EFX_REVERB_PRESET_DOME_SAINTPAULS;
+	real_time_reverb[1] = EFX_REVERB_PRESET_UNDERWATER;
+	real_time_reverb[2] = EFX_REVERB_PRESET_AUDITORIUM;
+	real_time_reverb[3] = EFX_REVERB_PRESET_PSYCHOTIC;
+
+}
+
+void Audio_Scene_Creator::move_song() {
+
+
+}
+
+void Audio_Scene_Creator::real_time_proc() {
 
 
 	   cout << " Thread has started "<<endl;
@@ -215,36 +243,25 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 	   alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
 	   alSourcef(helloSource[0], AL_PITCH, real_time_pitch);
 	   alSourcef(helloSource[0], AL_GAIN, 1.5);
-	   alSourcef(helloSource[0], AL_ROLLOFF_FACTOR, 13);
+	   alSourcef(helloSource[0], AL_ROLLOFF_FACTOR, 7);
 	   alSourcef(helloSource[0], AL_REFERENCE_DISTANCE, 300);
-	   alSourcef(helloSource[0], AL_MAX_DISTANCE, 500);
+	   alSourcef(helloSource[0], AL_MAX_DISTANCE, 800);
 
-	/*   reverb = EFX_REVERB_PRESET_PSYCHOTIC;
 
-	   if (!alcIsExtensionPresent(alcGetContextsDevice(alcGetCurrentContext()), "ALC_EXT_EFX"))
-	   {
-		   fprintf(stderr, "Error: EFX not supported\n");
-		   
-	   }
 
-	   get_process_address();
-
-	   LoadEffect(&reverb);
-
-	   slot = 0;
-
-	   alGenAuxiliaryEffectSlots(1, &slot);
-	   alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect);
-	   assert(alGetError() == AL_NO_ERROR && "Failed to set effect slot");
-
-	   alSource3i(helloSource[0], AL_AUXILIARY_SEND_FILTER, slot, 0, AL_FILTER_NULL);
-	   assert(alGetError() == AL_NO_ERROR && "Failed to setup sound source");
-	   */
-
-	   errorCode = alGetError();
-	   
 	   while (!done) { // Main loop
 					   // Poll for recoverable buffer
+		  
+
+		   if (real_time_effect) {
+
+			   alSource3i(helloSource[0], AL_AUXILIARY_SEND_FILTER, slot[4], 0, AL_FILTER_NULL);
+			   assert(alGetError() == AL_NO_ERROR && "Failed to setup sound source");
+			   errorCode = alGetError();
+			   real_time_effect = false;
+			   cout << "Effect added"<<endl;
+		   }
+
 
 		   alSourcef(helloSource[0], AL_PITCH, real_time_pitch);
 		   alSource3f(helloSource[0], AL_POSITION, X_real_time, Y_real_time, Z_real_time);
@@ -278,6 +295,8 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 				   // Queue the buffer
 				   alSourceQueueBuffers(helloSource[0], 1, &myBuff);
 
+				   
+
 				   // Restart the source if needed
 				   // (if we take too long and the queue dries up,
 				   //  the source stops playing).
@@ -302,51 +321,17 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 	   cout << "Thread has ended" << endl;
 	   // Stop the sources
 	  
-	  
-	 
-
 
 } 
 
 void Audio_Scene_Creator::which_effect(int effect_number) {
 
-	if (effect_number == 1) {
+	for (int i = 0; i < source_counter; i++) {
 
-		cout << "Effect is  : " << effect_number << endl;
-		reverb = EFX_REVERB_PRESET_DOME_SAINTPAULS;
-		add_effects(effect_number);
-	}
-
-
-	else if (effect_number == 2) {
-
-
-		cout << "Effect is  : " << effect_number<<endl ;
-		reverb = EFX_REVERB_PRESET_UNDERWATER;
-		add_effects(effect_number);
-
-	}
-
-
-	else if (effect_number == 3) {
-
-
-		cout << "Effect is  : " << effect_number<<endl;
-		reverb = EFX_REVERB_PRESET_AUDITORIUM;
-		add_effects(effect_number);
+		alSource3i(source[i], AL_AUXILIARY_SEND_FILTER, slot[effect_number], 0, AL_FILTER_NULL);
+		assert(alGetError() == AL_NO_ERROR && "Failed to setup sound source");
 		
 	}
-
-
-	else if (effect_number == 4) {
-
-
-		cout << "Effect is  : " << effect_number << endl;
-		reverb = EFX_REVERB_PRESET_PSYCHOTIC;
-		add_effects(effect_number);
-		
-	}
-
 
 }
 void Audio_Scene_Creator::move_listener(int X, int Y, int Z) {
@@ -380,17 +365,15 @@ void Audio_Scene_Creator::files_drumkit() {
 	names[6] = base_folder + "Drums/hihatcym.aiff";
 	names[7] = base_folder + "Drums/ridecymb.aiff";
 	names[8] = base_folder + "Drums/crashcym.aiff";
-	names[9] = base_folder + "Drums/cowbell1.aiff";
-	names[10] = base_folder + "Drums/tambourn.aiff";
 	
 	
-	for (int i = 11; i < 17; i++) {
+	for (int i = 9; i < 17; i++) {
 
-		names[i] = base_folder + "Bells/chimey_" + to_string(i-10) + ".aiff";
+		names[i] = base_folder + "Bells/chimey_" + to_string(i-8) + ".aiff";
 
 	}
 
-	names[17] = base_folder + "Songs/ed.aiff";
+	names[17] = base_folder + "Natural/syria.aiff";
 
 }
 
@@ -398,11 +381,11 @@ void Audio_Scene_Creator::play_a_source(int which_source) {
 
 
 	alSourcePlay(source[which_source]);
-
+	
 
 }
 
-void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *reverb , int effect_num) {
+void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *rev, int effect_num) {
 
 
 	
@@ -418,29 +401,29 @@ void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *reverb , int 
 		* reverb properties. */
 		alEffecti(effect[effect_num], AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
 
-		alEffectf(effect[effect_num], AL_EAXREVERB_DENSITY, reverb->flDensity);
-		alEffectf(effect[effect_num], AL_EAXREVERB_DIFFUSION, reverb->flDiffusion);
-		alEffectf(effect[effect_num], AL_EAXREVERB_GAIN, reverb->flGain);
-		alEffectf(effect[effect_num], AL_EAXREVERB_GAINHF, reverb->flGainHF);
-		alEffectf(effect[effect_num], AL_EAXREVERB_GAINLF, reverb->flGainLF);
-		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_TIME, reverb->flDecayTime);
-		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_HFRATIO, reverb->flDecayHFRatio);
-		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_LFRATIO, reverb->flDecayLFRatio);
-		alEffectf(effect[effect_num], AL_EAXREVERB_REFLECTIONS_GAIN, reverb->flReflectionsGain);
-		alEffectf(effect[effect_num], AL_EAXREVERB_REFLECTIONS_DELAY, reverb->flReflectionsDelay);
-		alEffectfv(effect[effect_num], AL_EAXREVERB_REFLECTIONS_PAN, reverb->flReflectionsPan);
-		alEffectf(effect[effect_num], AL_EAXREVERB_LATE_REVERB_GAIN, reverb->flLateReverbGain);
-		alEffectf(effect[effect_num], AL_EAXREVERB_LATE_REVERB_DELAY, reverb->flLateReverbDelay);
-		alEffectfv(effect[effect_num], AL_EAXREVERB_LATE_REVERB_PAN, reverb->flLateReverbPan);
-		alEffectf(effect[effect_num], AL_EAXREVERB_ECHO_TIME, reverb->flEchoTime);
-		alEffectf(effect[effect_num], AL_EAXREVERB_ECHO_DEPTH, reverb->flEchoDepth);
-		alEffectf(effect[effect_num], AL_EAXREVERB_MODULATION_TIME, reverb->flModulationTime);
-		alEffectf(effect[effect_num], AL_EAXREVERB_MODULATION_DEPTH, reverb->flModulationDepth);
-		alEffectf(effect[effect_num], AL_EAXREVERB_AIR_ABSORPTION_GAINHF, reverb->flAirAbsorptionGainHF);
-		alEffectf(effect[effect_num], AL_EAXREVERB_HFREFERENCE, reverb->flHFReference);
-		alEffectf(effect[effect_num], AL_EAXREVERB_LFREFERENCE, reverb->flLFReference);
-		alEffectf(effect[effect_num], AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, reverb->flRoomRolloffFactor);
-		alEffecti(effect[effect_num], AL_EAXREVERB_DECAY_HFLIMIT, reverb->iDecayHFLimit);
+		alEffectf(effect[effect_num], AL_EAXREVERB_DENSITY, rev->flDensity);
+		alEffectf(effect[effect_num], AL_EAXREVERB_DIFFUSION, rev->flDiffusion);
+		alEffectf(effect[effect_num], AL_EAXREVERB_GAIN, rev->flGain);
+		alEffectf(effect[effect_num], AL_EAXREVERB_GAINHF, rev->flGainHF);
+		alEffectf(effect[effect_num], AL_EAXREVERB_GAINLF, rev->flGainLF);
+		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_TIME, rev->flDecayTime);
+		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_HFRATIO, rev->flDecayHFRatio);
+		alEffectf(effect[effect_num], AL_EAXREVERB_DECAY_LFRATIO, rev->flDecayLFRatio);
+		alEffectf(effect[effect_num], AL_EAXREVERB_REFLECTIONS_GAIN, rev->flReflectionsGain);
+		alEffectf(effect[effect_num], AL_EAXREVERB_REFLECTIONS_DELAY, rev->flReflectionsDelay);
+		alEffectfv(effect[effect_num], AL_EAXREVERB_REFLECTIONS_PAN, rev->flReflectionsPan);
+		alEffectf(effect[effect_num], AL_EAXREVERB_LATE_REVERB_GAIN, rev->flLateReverbGain);
+		alEffectf(effect[effect_num], AL_EAXREVERB_LATE_REVERB_DELAY, rev->flLateReverbDelay);
+		alEffectfv(effect[effect_num], AL_EAXREVERB_LATE_REVERB_PAN, rev->flLateReverbPan);
+		alEffectf(effect[effect_num], AL_EAXREVERB_ECHO_TIME, rev->flEchoTime);
+		alEffectf(effect[effect_num], AL_EAXREVERB_ECHO_DEPTH, rev->flEchoDepth);
+		alEffectf(effect[effect_num], AL_EAXREVERB_MODULATION_TIME, rev->flModulationTime);
+		alEffectf(effect[effect_num], AL_EAXREVERB_MODULATION_DEPTH, rev->flModulationDepth);
+		alEffectf(effect[effect_num], AL_EAXREVERB_AIR_ABSORPTION_GAINHF, rev->flAirAbsorptionGainHF);
+		alEffectf(effect[effect_num], AL_EAXREVERB_HFREFERENCE, rev->flHFReference);
+		alEffectf(effect[effect_num], AL_EAXREVERB_LFREFERENCE, rev->flLFReference);
+		alEffectf(effect[effect_num], AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, rev->flRoomRolloffFactor);
+		alEffecti(effect[effect_num], AL_EAXREVERB_DECAY_HFLIMIT, rev->iDecayHFLimit);
 	}
 	else
 	{
@@ -451,19 +434,19 @@ void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *reverb , int 
 		* available reverb properties. */
 		alEffecti(effect[effect_num], AL_EFFECT_TYPE, AL_EFFECT_REVERB);
 
-		alEffectf(effect[effect_num], AL_REVERB_DENSITY, reverb->flDensity);
-		alEffectf(effect[effect_num], AL_REVERB_DIFFUSION, reverb->flDiffusion);
-		alEffectf(effect[effect_num], AL_REVERB_GAIN, reverb->flGain);
-		alEffectf(effect[effect_num], AL_REVERB_GAINHF, reverb->flGainHF);
-		alEffectf(effect[effect_num], AL_REVERB_DECAY_TIME, reverb->flDecayTime);
-		alEffectf(effect[effect_num], AL_REVERB_DECAY_HFRATIO, reverb->flDecayHFRatio);
-		alEffectf(effect[effect_num], AL_REVERB_REFLECTIONS_GAIN, reverb->flReflectionsGain);
-		alEffectf(effect[effect_num], AL_REVERB_REFLECTIONS_DELAY, reverb->flReflectionsDelay);
-		alEffectf(effect[effect_num], AL_REVERB_LATE_REVERB_GAIN, reverb->flLateReverbGain);
-		alEffectf(effect[effect_num], AL_REVERB_LATE_REVERB_DELAY, reverb->flLateReverbDelay);
-		alEffectf(effect[effect_num], AL_REVERB_AIR_ABSORPTION_GAINHF, reverb->flAirAbsorptionGainHF);
-		alEffectf(effect[effect_num], AL_REVERB_ROOM_ROLLOFF_FACTOR, reverb->flRoomRolloffFactor);
-		alEffecti(effect[effect_num], AL_REVERB_DECAY_HFLIMIT, reverb->iDecayHFLimit);
+		alEffectf(effect[effect_num], AL_REVERB_DENSITY, rev->flDensity);
+		alEffectf(effect[effect_num], AL_REVERB_DIFFUSION, rev->flDiffusion);
+		alEffectf(effect[effect_num], AL_REVERB_GAIN, rev->flGain);
+		alEffectf(effect[effect_num], AL_REVERB_GAINHF, rev->flGainHF);
+		alEffectf(effect[effect_num], AL_REVERB_DECAY_TIME, rev->flDecayTime);
+		alEffectf(effect[effect_num], AL_REVERB_DECAY_HFRATIO, rev->flDecayHFRatio);
+		alEffectf(effect[effect_num], AL_REVERB_REFLECTIONS_GAIN, rev->flReflectionsGain);
+		alEffectf(effect[effect_num], AL_REVERB_REFLECTIONS_DELAY, rev->flReflectionsDelay);
+		alEffectf(effect[effect_num], AL_REVERB_LATE_REVERB_GAIN, rev->flLateReverbGain);
+		alEffectf(effect[effect_num], AL_REVERB_LATE_REVERB_DELAY, rev->flLateReverbDelay);
+		alEffectf(effect[effect_num], AL_REVERB_AIR_ABSORPTION_GAINHF, rev->flAirAbsorptionGainHF);
+		alEffectf(effect[effect_num], AL_REVERB_ROOM_ROLLOFF_FACTOR, rev->flRoomRolloffFactor);
+		alEffecti(effect[effect_num], AL_REVERB_DECAY_HFLIMIT, rev->iDecayHFLimit);
 	}
 
 	/* Check if an error occured, and clean up if so. */
@@ -471,6 +454,7 @@ void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *reverb , int 
 	if (err != AL_NO_ERROR)
 	{
 		fprintf(stderr, "OpenAL error: %s\n", alGetString(err));
+
 		if (alIsEffect(effect[effect_num]))
 			alDeleteEffects(1, &effect[effect_num]);
 		
@@ -480,33 +464,55 @@ void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *reverb , int 
 }
 
 
-void Audio_Scene_Creator::add_effects(int effect_number) {
+void Audio_Scene_Creator::add_effects() {
 
 	if (!alcIsExtensionPresent(alcGetContextsDevice(alcGetCurrentContext()), "ALC_EXT_EFX"))  {
 		
+
+		fprintf(stderr, "Error: EFX not supported\n");
+
+	}
+
+	get_process_address();
+	
+	for (int i = 0; i < 4; i++) {
+
+		LoadEffect(&reverb[i], i);
+		slot[i] = 0;
+		alGenAuxiliaryEffectSlots(1, &slot[i]);
+		alAuxiliaryEffectSloti(slot[i], AL_EFFECTSLOT_EFFECT, effect[i]);
+		assert(alGetError() == AL_NO_ERROR && "Failed to set effect slot");
+
+	}
+
+	
+
+}
+
+
+void Audio_Scene_Creator::add_real_time_effects() {
+
+	if (!alcIsExtensionPresent(alcGetContextsDevice(alcGetCurrentContext()), "ALC_EXT_EFX")) {
+
+
 		fprintf(stderr, "Error: EFX not supported\n");
 
 	}
 
 	get_process_address();
 
+	for (int i = 4; i < 5; i++) {
 
-	LoadEffect(&reverb,effect_number);
-	
-	alGenAuxiliaryEffectSlots(1, &slot[effect_number]);
-	alAuxiliaryEffectSloti(slot[effect_number], AL_EFFECTSLOT_EFFECT, effect[effect_number]);
-	assert(alGetError() == AL_NO_ERROR && "Failed to set effect slot");
-
-	for (int i = 0; i < source_counter; i++) {
-
-		alSource3i(source[i], AL_AUXILIARY_SEND_FILTER, slot[effect_number], 0, AL_FILTER_NULL);
-		assert(alGetError() == AL_NO_ERROR && "Failed to setup sound source");
+		LoadEffect(&real_time_reverb[3], i);
+		slot[i] = 0;
+		alGenAuxiliaryEffectSlots(1, &slot[i]);
+		alAuxiliaryEffectSloti(slot[i], AL_EFFECTSLOT_EFFECT, effect[i]);
+		assert(alGetError() == AL_NO_ERROR && "Failed to set effect slot");
 
 	}
 
-	
-}
 
+}
 
 void Audio_Scene_Creator::get_process_address() {
 

@@ -104,7 +104,7 @@
     <ClInclude Include="..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi\RtMidi.h">
       <Filter>addons\ofxMidi\libs\rtmidi</Filter>
     </ClInclude>
-    <ClInclude Include="src\AudioThread.h">
+    <ClInclude Include="src\Convolution_Thread.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

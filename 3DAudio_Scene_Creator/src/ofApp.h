@@ -3,7 +3,11 @@
 #include "ofMain.h"
 #include "Audio_Scene_Creator.h"
 #include "ofxMidi.h"
-#include "AudioThread.h"
+#include "Convolution_Thread.h"
+#include <windows.devices.geolocation.h>
+#include <locationapi.h>
+
+
 
 class ofApp : public ofBaseApp, public ofxMidiListener {
 
@@ -25,31 +29,44 @@ public:
 	void gotMessage(ofMessage msg);
 	void audioIn(float * input, int bufferSize, int nChannels);
 
+	 ~ofApp();
 
 	void newMidiMessage(ofxMidiMessage& eventArgs);
 	void play_midi_drumkit();
 	void midiSetup();
-
-
-	void draw_ambient_listener();
+	void draw_ambient_listener(int radius, int anim_shape, double sine_pct, int color_choice);
 	void file_init();
 
 	// bool convolve1D(double conv_buf[256], int dataSize, int kernelSize);
-
-	void image_init();
 	void draw_scene();
 	void death_star();
 	void change_drum_pos(int which_drum);
 	void intitialize_drumkit_location();
-
 	void move_drums();
-	void displace_listener();
 	void draw_environments();
-//	void ofApp::audioOut(float * out, int bufferSize, int nChannels);
+	void add_effect_real_time(int);
+	void video_initialize();
+	void normal_view_drag_events(int x , int y);
 
+
+	// Earth View Functions 
+	void create_earth_view_points(int x, int y);
+	void draw_earth_view_points();
+	void lat_long_to_x_y(double lati, double longi);
+	string get_country_name(int x, int y);
+
+	void initialize_country_points();
+	bool if_India(int x, int y);
+	bool if_Syria(int x, int y);
+	bool if_Monterey(int x, int y);
+	bool if_Florida(int x, int y);
+	bool if_Montreal(int x, int y);
+	bool if_Nova_Scotia(int x, int y);
+	void audio_file_name_parser(char*buf);
 
 private:
 
+	// Variables for normal view 
 
 	int border_len = 80 ;
 
@@ -57,21 +74,27 @@ private:
 	int circle_width = 90;
 	int circle_height = 90;
 
-	int ambient_env_radius = 100;
+	int ambient_env_radius = 150;
+	int listener_radius = 30;
+
 	ofImage mic_off;
 	ofImage alien;
 	ofImage mic_on;
-	ofImage road;
+	ofImage earth_texture;
 	ofImage song[2];
-	ofImage real_time_audio;
-
+	
 	ofImage acoustic_env[4];
 
+	ofVideoPlayer earth_map;
 	double death_star_angle = 0.0; 
 	double image_rotate = 0.0;
+	double song_rotate = 0.0;
+	double earth_rotate = 0.0;
+	double dist_threshold = 100;
 	bool draw_mic_on = false;
 	bool draw_mic_off = true;
 	bool is_mic_on = false;
+	bool is_earth_simulation_playing = false;
 
 	vector<double> input_sig;
 	vector<double> impulse_resp;
@@ -112,7 +135,10 @@ private:
 	ofPoint drum_kit[17];
 	ofPoint point_listener;
 	ofPoint ambient_environment;
+	ofPoint earth_video;
+
 	ofSpherePrimitive song_sphere[2];
+	ofSpherePrimitive earth;
 
 	vector<ofPoint> vertices;
 	vector<ofColor> colors;
@@ -129,13 +155,37 @@ private:
 
 	ofSoundStream sound_stream;
 
-    AudioThread audio_thread;
+    Convolution_Thread audio_thread;
 	
-	ofMutex lock;
+	
+	ofSoundPlayer alien_sound[4],point_selection;
 
-	// Variables for Real Time Audio Processing 
+	
+	// Variables for Earth View 
 
+	int earth_view_point_radius = 5;
+	int number_of_earth_points = 0;
+
+	vector <ofPoint> earth_view_points;
+	vector <string> country_name;
+	ofPoint pixel_pos;
+	
+	
+ 	struct country_points {
+
+		ofPoint Syria[2];
+		ofPoint India[2];
+		ofPoint Monterey[2];
+		ofPoint Nova_Scotia[2];
+		ofPoint Montreal[2];
+		ofPoint Florida[2];
+
+	}; 
+
+	country_points earth_data; 
+	
+
+	
 };
-
 
 

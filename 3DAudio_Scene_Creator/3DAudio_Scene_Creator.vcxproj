@@ -186,7 +186,7 @@
     <ClCompile Include="..\..\of_v0.9.6_vs_release\addons\ofxMidi\libs\rtmidi\RtMidi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\AudioThread.h" />
+    <ClInclude Include="src\Convolution_Thread.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="src\Audio_Scene_Creator.h" />
     <ClInclude Include="..\..\of_v0.9.6_vs_release\addons\ofxMidi\src\desktop\ofxRtMidiIn.h" />
