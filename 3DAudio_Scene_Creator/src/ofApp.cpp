@@ -1,14 +1,13 @@
 #include "ofApp.h"
 #include<iostream>
 #include<string>
-
-
+#include<fstream>
 //--------------------------------------------------------------
 
 
 // Initializes images, sounds, framerate of the application and other input files.
 
-
+using namespace boost::filesystem;
 using namespace std;
 
 void ofApp::setup() {
@@ -16,7 +15,7 @@ void ofApp::setup() {
 
 	sound_stream.setup(this, 0, 1, 44100, buffersize, 2); // 2 output and 1 input channel with a sampling rate of 44100
 	file_init();
-	ofBackground(211, 211, 211); // Grey Background 
+	ofSetBackgroundColor(0);
 	ofSetFullscreen(true);
 	ofSetFrameRate(30);
 	ofEnableSmoothing();
@@ -25,6 +24,11 @@ void ofApp::setup() {
 	sound_stream.setDeviceID(0);
 	left.resize(buffersize);
 	left.assign(buffersize, 0.0);
+
+	get_file_names_from_dir();
+	audio_file_name_parser();
+	lat_long_to_x_y();
+
 
 	midiSetup();  // Setup for midi input 
 	intitialize_drumkit_location();
@@ -84,15 +88,20 @@ void ofApp::setup() {
 
 	}
 
+	load_ambient_videos();
+
 	video_initialize();
 	initialize_country_points();
 
-	
-	cout << ofGetScreenWidth() << endl;
-	cout << ofGetScreenHeight() << endl;
 
+	ofTrueTypeFont::setGlobalDpi(72);
+	verdana14.load("verdana.ttf", 14, true, true);
+	verdana14.setLineHeight(18.0f);
+	verdana14.setLetterSpacing(1.037);
 	
 }
+
+
 	
 
 // Initializes the image files for the drum kit 
@@ -139,18 +148,72 @@ void ofApp::file_init() {
 
 	earth_map.loadMovie("video/earth_map_2.mp4");
 
+	load_ambient_videos();
+
 	for (int i = 0; i < 4; i++) {
 
 		alien_sound[i].load("Sounds/Alien/alien_sound_" + to_string(i + 1) + ".wav");
 		alien_sound[i].setVolume(0.1);
 		
+
 	}
 		
 	point_selection.load("Sounds/Bells/selection.wav");
 	point_selection.setVolume(0.1);
+
+	cork_board.load("Images/cork_board.jpg");
+	crumpled_paper.load("Images/crumpled_paper.jpg");
+	pin.loadImage("Images/board_pin.jpg");
+	boat.loadImage("Images/boat_1.png");
+	
+
 }	
 
 
+void ofApp::load_ambient_videos() {
+
+	ambient_environment_videos[0].loadMovie("video/church.mp4");
+	ambient_environment_videos[1].loadMovie("video/underwater.mp4");
+	ambient_environment_videos[2].loadMovie("video/auditorium.mp4");
+	
+
+	for (int i = 0; i < 3; i++) {
+
+		ambient_environment_videos[i].setVolume(0);
+		ambient_environment_videos[i].setSpeed(1);
+		ambient_environment_videos[i].setLoopState(OF_LOOP_NORMAL);
+
+	}
+
+	for (int i = 0; i < 4; i++) {
+
+		ambient_videos_loc[i].z = 10;
+
+		if (i < 2) {
+
+			ambient_videos_loc[i].x = ofGetScreenWidth() - 600 + 300 * i;
+			ambient_videos_loc[i].y = ofGetScreenHeight() - 400;
+			
+		}
+
+		else {
+
+			ambient_videos_loc[i].x = ofGetScreenWidth() - 600 + 300 * (i - 2);
+			ambient_videos_loc[i].y = ofGetScreenHeight() - 400 + 200;
+
+		}
+	}
+
+
+	for (int i = 0; i < 3; i++) {
+
+		ambient_environment_videos[i].play();
+		ambient_environment_videos[i].setPaused(true);
+		
+	}
+
+	
+}
 
 // Initializes the midi parameters
 
@@ -209,26 +272,34 @@ void ofApp::intitialize_drumkit_location() {
 // Method to draw the drum kit parts in the GUI 
 
 
+void ofApp::initialize_earth_point_sources() {
+
+
+	for (int i = 0; i < pixel_pos.size(); i++) {
+
+		create_sounds.load_earth_point_files(file_names[i],i+17) ;
+		create_sounds.add_source(pixel_pos[i].x - ofGetScreenWidth()/2, 0 , pixel_pos[i].y - ofGetScreenHeight()/2, i + number_of_sources);
+		create_sounds.play_a_source(i + number_of_sources);
+	}
+
+	
+
+}
 void ofApp::draw_environments() {
 
+	
 	ofSetLineWidth(abs(12*sin(earth_rotate)));
 	ofSetColor(255*cos(earth_rotate),0,255*sin(earth_rotate));
 	ofDrawLine(ofGetScreenWidth() - 600, ofGetScreenHeight(), ofGetScreenWidth() - 600, ofGetScreenHeight() - 400);
 	ofDrawLine(ofGetScreenWidth() - 604, ofGetScreenHeight() - 400, ofGetScreenWidth(), ofGetScreenHeight() - 400);
 	ofSetColor(211, 211, 211);
-	for (int i = 0; i < 4; i++) {
+	
+	for (int i = 0; i < 3; i++) {
 
-		if (i < 2) {
-
-			acoustic_env[i].draw(ofGetScreenWidth() - 600 + 300*i , ofGetScreenHeight() - 400 , 300, 200);
-		}
-
-		else {
-
-			acoustic_env[i].draw(ofGetScreenWidth() - 600 + 300 * (i-2), ofGetScreenHeight() - 400 +200,300,200);
-
-		}
+		ambient_environment_videos[i].draw(ambient_videos_loc[i], 300, 200);
 	}
+
+	acoustic_env[3].draw(ambient_videos_loc[3], 300, 200);
 }
 void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, int color_choice) {
 
@@ -353,11 +424,12 @@ void ofApp::draw_scene() {
 
 	double theta = 0,x,y;
 
-
+	
+	
 	for (int i = 0; i < number_of_sources; i++) {
 
 		if(!dragged[i]){
-
+		
 			drum_kit[i].x = (radius_of_rev -30)*cos(2 * PI*i / number_of_sources);
 			drum_kit[i].y = (radius_of_rev-30)*sin(2 * PI*i / number_of_sources);
 			drumkit_parts[i].draw(drum_kit[i].x -50 , drum_kit[i].y -50 , i*0.5, circle_width, circle_height);
@@ -388,6 +460,12 @@ void ofApp::update() {
 
 	ofSoundUpdate();
 
+	for (int i = 0; i < 3; i++) {
+
+		ambient_environment_videos[i].update();
+		
+	}
+
 	earth_map.update();
 
 	if (is_mic_on) {
@@ -412,6 +490,7 @@ void ofApp::update() {
 			listener_radius = 10;
 			is_earth_simulation_playing = true;
 			earth_map.play();
+			initialize_earth_point_sources();
 		}
 
 	}
@@ -688,11 +767,26 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
 */
 
 
-void ofApp::lat_long_to_x_y(double lati, double longi) {
+void ofApp::lat_long_to_x_y() {
 
-	pixel_pos.x = ((int)ofGetScreenWidth() / 360.0)*(180 + longi);
-	pixel_pos.y = ((int)ofGetScreenHeight() / 180.0)*(90 - lati);
+	pixel_pos.resize(latitude.size());
 
+	mouse_hover = new bool[pixel_pos.size()];
+
+	for (int i = 0; i < pixel_pos.size(); i++) {
+
+		mouse_hover[i] = false;
+
+	}
+	for (int i = 0; i < pixel_pos.size(); i++) {
+
+		pixel_pos[i].x = (((int)ofGetScreenWidth() + 180) / 360.0)*(180 + longitude[i]) - 100 ;
+		pixel_pos[i].y = (((int)ofGetScreenHeight() - 90)/ 180.0)*(90 - latitude[i]) ;
+
+	}
+
+	are_locations_available = true;
+	
 }
 void ofApp:: initialize_country_points() {
 
@@ -768,8 +862,7 @@ string ofApp::get_country_name(int x, int y) {
 
 	else if (if_Syria(x, y)) {
 
-		create_sounds.add_source(x, (x + y) / 2, y, 17);
-		create_sounds.play_a_source(17);
+		
 		return "Syria";
 	}
 		
@@ -795,11 +888,22 @@ void ofApp::create_earth_view_points(int x, int y) {
 	earth_view_points[number_of_earth_points - 1].x = x;
 	earth_view_points[number_of_earth_points - 1].y = y;
 	country_name[number_of_earth_points - 1] = get_country_name(x,y);
-
-	cout << "country : " << country_name[number_of_earth_points - 1];
-	cout << " X : " << earth_view_points[number_of_earth_points - 1].x << endl;
-	cout << " Y : " << earth_view_points[number_of_earth_points - 1].y << endl;
 	
+}
+
+
+void ofApp::update_place_info_box(int x ) {
+
+	ofSetColor(255, 255, 255);
+	ofDrawRectRounded(0,0, 350, 80, 10);
+	ofSetColor(245, 58, 135);
+	ofTranslate(0, 0, 10);
+	verdana14.drawString("Activity : " + activity[x], 30, 20);
+	verdana14.drawString("Location : " + location[x], 30, 40);
+	verdana14.drawString("Recorded in : " + time_recorded[x], 30, 60);
+
+
+
 }
 
 void ofApp::draw_earth_view_points() {
@@ -852,23 +956,125 @@ void ofApp::draw_earth_view_points() {
 
 }
 
-void ofApp::audio_file_name_parser(char*audio_file_name) {
+void ofApp::audio_file_name_parser() {
 
-	audio_file_name = "320A-Class_CCRMA_20.567_99.123.aiff";
+	
+	vector<string> file_names_clone(file_names);
 
-	int buf_size = 0;
+	mouse_hover = new bool[file_names_clone.size()];
 
-	while (audio_file_name[buf_size] != '\0') {
+	for (int k = 0; k < file_names_clone.size(); k++) {
 
-		buf_size++;
+		for (int i = 0; i < file_names_clone[k].size() - 5; i++) {
+
+			
+			if (file_names_clone[k][i] == '_') {
+
+				file_names_clone[k][i] = ' ';
+
+			}
+
+		}
+
+	}
+
+	for (int k = 0; k < file_names_clone.size(); k++) {
+
+		for (int i = 0; i < 5; i++) {
+
+			file_names_clone[k].pop_back();
+
+		}
+
+	}
+
+
+	file_counter = 0;
+
+	for (int i = 0; i < file_names_clone.size(); i++) {
+
+		std::stringstream s(file_names_clone[i]);
+
+	
+		file_counter++;
+
+		latitude.resize(file_counter);
+		longitude.resize(file_counter);
+		activity.resize(file_counter);
+		location.resize(file_counter);
+		time_recorded.resize(file_counter);
+
+		s >> activity[file_counter - 1] >> location[file_counter - 1] >> latitude[file_counter - 1] >> longitude[file_counter - 1] >> time_recorded[file_counter-1];
+
+	
+		
 
 	}
 	
-	for (int i = 0; i < buf_size; i++) {
+	
+
+}
+
+void ofApp::get_file_names_from_dir() {
 
 
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind;
+
+	//Dont' forget you change this directory with one you want to traverse!
+	TCHAR  *directory = TEXT("C:/Users/pmurgai/Desktop/Quarter-1/256A/Final_Project/3DAudio_Scene_Creator/bin/data/Sounds/Geo_Tagged_Data");
+	TCHAR patter[MAX_PATH];
+	TCHAR fileName[MAX_PATH];
+	memset(patter, 0x00, MAX_PATH);
+	_stprintf(patter, TEXT("%s/*.aiff"), directory);
+	hFind = FindFirstFile(patter, &FindFileData);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		printf("FindFirstFile failed (%d)\n", GetLastError());
 
 	}
+	else
+	{
+		do
+		{
+
+
+			//ignore current and parent directories
+			if (_tcscmp(FindFileData.cFileName, TEXT(".")) == 0 || _tcscmp(FindFileData.cFileName, TEXT("..")) == 0)
+				continue;
+
+			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			{
+				//ignore directories
+			}
+			else
+			{
+				//list the Files
+
+				file_counter++;
+				file_names.resize(file_counter);
+
+				//	_tprintf(TEXT("%s\n"),FindFileData.cFileName);
+
+
+				memset(fileName, 0x00, sizeof(fileName));
+				file_names[file_counter - 1] = FindFileData.cFileName;
+				_stprintf(fileName, TEXT("%s\\%s"), directory, FindFileData.cFileName);
+				/*	FILE *fptr = _tfopen((const TCHAR *)fileName, TEXT("r"));
+				//do here whatever you want to do..
+				fclose(fptr); */
+
+				
+
+			}
+		} while (FindNextFile(hFind, &FindFileData));
+		FindClose(hFind);
+	}
+
+
+
+
+
 }
 
 /*
@@ -879,6 +1085,8 @@ void ofApp::audio_file_name_parser(char*audio_file_name) {
 
 void ofApp::draw() {
 
+	
+	
 	int listener_x, listener_y, listener_z;
 
 
@@ -898,24 +1106,53 @@ void ofApp::draw() {
 
 	if (is_earth_simulation_playing) {
 
-		ofSetColor(211, 211, 211);
-
+		
+		
 		ofPushMatrix();
+		
+			
+		    ofEnableAlphaBlending();
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			ofTranslate(900, 500);
+			ofSetColor(25, 255,255, 255);
+			boat.setUseTexture(false);
+			boat.draw(0, 0,boat.getWidth(),boat.getHeight());
+			ofDisableAlphaBlending();
+	
+		ofPopMatrix();
 
-		earth_map.draw(earth_video, ofGetScreenWidth(), ofGetScreenHeight());
+		if (mouse_hover[which_point] == true) {
+
+			ofPushMatrix();
+			ofTranslate(pixel_pos[which_point].x + 50 ,pixel_pos[which_point].y - 50, 30);
+			update_place_info_box(which_point);
+		    ofPopMatrix();
+			
+		}
+		
+
+		ofSetColor(211, 211, 211);
+		ofPushMatrix();
+		ofTranslate(0, -51);
+		earth_map.draw(earth_video, ofGetScreenWidth() , 2*ofGetScreenHeight() + 51 - 1396 );
 
 		ofPopMatrix();
 
-		for (int i = 0; i < number_of_earth_points; i++) {
+		if (are_locations_available) {
 
-			ofPushMatrix();
+			for (int i = 0; i < pixel_pos.size() ; i++) {
 
-				ofTranslate(earth_view_points[i].x, earth_view_points[i].y,10);
-				ofRotateZ(image_rotate/2);
-				draw_earth_view_points();
+				 
 
-			ofPopMatrix();
+					ofPushMatrix();
+					ofTranslate(pixel_pos[i].x, pixel_pos[i].y, 10);
+					ofRotateZ(image_rotate / 2);
+					draw_earth_view_points();
 
+					ofPopMatrix();
+				
+			}
 		}
 
 	}
@@ -923,12 +1160,28 @@ void ofApp::draw() {
 	else {
 
 		ofPushMatrix();
+		ofSetColor(211, 211, 211);
+		ofTranslate(-700, -400, -600);
+		cork_board.draw(0, 0, 2 * ofGetScreenWidth(), 2 * ofGetScreenHeight());
+
+		ofPopMatrix();
+
+		ofPushMatrix();
 		draw_environments();
 		ofPopMatrix();
 
 		ofPushMatrix();
 
+		
 		ofTranslate(ambient_environment.x, ambient_environment.y);
+
+		ofPushMatrix();
+		// ofSetColor(211, 211, 211);
+		ofTranslate(-225, -280, -100);
+		crumpled_paper.draw(0, 0, 600, 700);
+		ofPopMatrix();
+
+		ofTranslate(0, 100);
 		ofRotateZ(image_rotate / 1.5);
 
 		draw_ambient_listener(ambient_env_radius, 4, 0.8, 1);
@@ -939,19 +1192,27 @@ void ofApp::draw() {
 
 		ofSetColor(0, 255, 255);
 		ofTranslate(300, ofGetScreenHeight() - 250);
+
+		ofPushMatrix();
+		// ofSetColor(211, 211, 211);
+		ofTranslate(-340, -270, -100);
+		crumpled_paper.draw(0, 0, 500, 600);
+		ofPopMatrix();
+
+		ofTranslate(0, 30);
 		ofRotateY(earth_rotate);
 
 		earth_texture.getTextureReference().bind();
 		earth.drawWireframe();
 		earth_texture.unbind();
 
+		
 		ofPopMatrix();
 
 		ofPushMatrix();
 
 		ofTranslate(300, 300);
 		ofSetColor(211, 211, 211);
-
 
 
 		ofPushMatrix();
@@ -1008,6 +1269,21 @@ void ofApp::draw() {
 		ofPushMatrix();
 		glEnable(GL_DEPTH_TEST);
 		ofTranslate(ofGetScreenWidth() / 2, ofGetScreenHeight() / 2);
+
+		ofPushMatrix();
+		ofSetColor(255, 255, 255);
+		ofTranslate(-200, -200, -100);
+		pin.draw(0, 0, 100, 100);
+		ofPopMatrix();
+
+
+		ofPushMatrix();
+		// ofSetColor(211, 211, 211);
+		ofTranslate(-1050, -1000, -580);
+		crumpled_paper.draw(0, 0, 2000, 2000);
+		ofPopMatrix();
+
+		ofTranslate(-40, 0);
 
 		ofPushMatrix();
 
@@ -1116,8 +1392,12 @@ void ofApp::draw() {
 
 
 		ofPushMatrix();
-		ofSetColor(211, 211, 211);
+
+		ofEnableAlphaBlending();
+		
 		draw_scene();
+
+		ofDisableAlphaBlending();
 		ofPopMatrix();
 
 		ofPopMatrix();
@@ -1215,6 +1495,7 @@ void ofApp::keyPressed(int key) {
 
 	}
 
+
 	if (key == 114) {
 
 		if (!is_earth_simulation_playing) {
@@ -1235,9 +1516,15 @@ void ofApp::keyPressed(int key) {
 			listener_radius = 30;
 			is_earth_simulation_playing = false;
 			earth_map.stop();
+			create_sounds.delete_earth_point_sources();
 
 		}
 
+	}
+
+	if (key = OF_KEY_LEFT_ALT) {
+
+		
 	}
 }
 	
@@ -1251,7 +1538,22 @@ void ofApp::keyReleased(int key) {
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {
 
+	for (int i = 0; i < pixel_pos.size(); i++) {
 
+		
+		if (sqrt(pow(x - pixel_pos[i].x, 2) + pow(y - pixel_pos[i].y, 2)) < 10) {
+			
+			mouse_hover[i] = true;
+			which_point = i;
+			
+			
+		}
+
+		else {
+
+			mouse_hover[i] = false;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -1280,6 +1582,7 @@ void ofApp::mouseDragged(int x, int y, int button) {
 //--------------------------------------------------------------
 void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 	
+
 	if (!is_earth_simulation_playing) {
 
 		if (mouse.x >= 0 && mouse.x <= border_len && mouse.y >= 0 && mouse.y <= border_len) {
@@ -1313,6 +1616,16 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 			create_sounds.which_effect(0);
 
 			add_effect_real_time(4);
+			ambient_environment_videos[0].setPaused(false);
+			ambient_environment_videos[0].play();
+			 
+			for (int i = 0; i < 3; i++) {
+
+				if(i!=0)
+				 ambient_environment_videos[i].setPaused(true);
+			}
+			
+			
 
 		}
 
@@ -1322,6 +1635,16 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 			add_effect_real_time(4);
 
+			ambient_environment_videos[1].setPaused(false);
+			ambient_environment_videos[1].play();
+
+			for (int i = 0; i < 3; i++) {
+
+				if (i != 1)
+					ambient_environment_videos[i].setPaused(true);
+			}
+
+
 		}
 
 		else if (mouse.x > ofGetScreenWidth() - 600 && mouse.x <= ofGetScreenWidth() - 600 + 300 && mouse.y >= ofGetScreenHeight() - 400 + 200 && mouse.y <= ofGetScreenHeight() - 400 + 400) {
@@ -1330,7 +1653,19 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 			add_effect_real_time(4);
 
+			ambient_environment_videos[2].setPaused(false);
+			ambient_environment_videos[2].play();
+
+			for (int i = 0; i < 3; i++) {
+
+				if (i != 2)
+					ambient_environment_videos[i].setPaused(true);
+			}
+
+
 		}
+
+
 
 		else   if (mouse.x >= ofGetScreenWidth() - 600 + 300 && mouse.x <= ofGetScreenWidth() - 600 + 600 && mouse.y >= ofGetScreenHeight() - 400 + 200 && mouse.y <= ofGetScreenHeight() - 400 + 400) {
 
@@ -1343,12 +1678,15 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 	}
 
 
+
 	else {
 
 		create_earth_view_points(mouse.x, mouse.y);
 		cout << " Entered view point Creation" << endl;
 
 	}
+
+	
 }
 
 

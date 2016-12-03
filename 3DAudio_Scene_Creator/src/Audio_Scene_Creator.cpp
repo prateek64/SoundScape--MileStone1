@@ -66,6 +66,17 @@ Audio_Scene_Creator::~Audio_Scene_Creator()
 }
 
 
+void Audio_Scene_Creator::delete_earth_point_sources() {
+
+
+	for (int i = 17; i < source_counter; i++) {
+
+		alDeleteSources(1, &source[i]);
+		alDeleteBuffers(1, &buffer[i]);
+
+	}
+}
+
 void Audio_Scene_Creator::listner_location() {
 
 
@@ -161,12 +172,25 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 	if (which_source < 17) {
 
 		alSourcei(source[which_source], AL_LOOPING, AL_FALSE);
+		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
+		alSourcef(source[which_source], AL_ROLLOFF_FACTOR, 13);
+		alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 500);
+		alSourcef(source[which_source], AL_MAX_DISTANCE, 900);
 	}
 
-	alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
-	alSourcef(source[which_source], AL_ROLLOFF_FACTOR,13);
-	alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 500);
-	alSourcef(source[which_source], AL_MAX_DISTANCE, 900);
+	else {
+
+		alSourcei(source[which_source], AL_LOOPING, AL_TRUE);
+		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
+		alSourcef(source[which_source], AL_ROLLOFF_FACTOR, 7);
+		alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 20);
+		alSourcef(source[which_source], AL_MAX_DISTANCE, 100);
+
+	}
+
+
+
+	
 
 	
 	/* allocate an OpenAL buffer and fill it with monaural sample data */
@@ -188,12 +212,7 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 
 }
 
-void Audio_Scene_Creator::delete_sources() {
 
-
-
-
-}
 void Audio_Scene_Creator::reverb_array() {
 
 
@@ -354,6 +373,13 @@ void Audio_Scene_Creator::file_names() {
 }
 
 
+void Audio_Scene_Creator::load_earth_point_files(string file_name, int which_source) {
+
+	names[which_source] = base_folder + "Geo_Tagged_Data/" + file_name;
+
+
+}
+
 void Audio_Scene_Creator::files_drumkit() {
 
 	names[0] = base_folder + "Drums/dope.aiff";
@@ -373,7 +399,6 @@ void Audio_Scene_Creator::files_drumkit() {
 
 	}
 
-	names[17] = base_folder + "Natural/syria.aiff";
 
 }
 

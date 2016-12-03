@@ -4,8 +4,7 @@
 #include "Audio_Scene_Creator.h"
 #include "ofxMidi.h"
 #include "Convolution_Thread.h"
-#include <windows.devices.geolocation.h>
-#include <locationapi.h>
+
 
 
 
@@ -47,12 +46,13 @@ public:
 	void add_effect_real_time(int);
 	void video_initialize();
 	void normal_view_drag_events(int x , int y);
+	void load_ambient_videos();
 
 
 	// Earth View Functions 
 	void create_earth_view_points(int x, int y);
 	void draw_earth_view_points();
-	void lat_long_to_x_y(double lati, double longi);
+	void lat_long_to_x_y();
 	string get_country_name(int x, int y);
 
 	void initialize_country_points();
@@ -62,7 +62,10 @@ public:
 	bool if_Florida(int x, int y);
 	bool if_Montreal(int x, int y);
 	bool if_Nova_Scotia(int x, int y);
-	void audio_file_name_parser(char*buf);
+	void audio_file_name_parser();
+	void get_file_names_from_dir();
+	void initialize_earth_point_sources();
+	void update_place_info_box(int);
 
 private:
 
@@ -84,7 +87,7 @@ private:
 	ofImage song[2];
 	
 	ofImage acoustic_env[4];
-
+	ofVideoPlayer ambient_environment_videos[4];
 	ofVideoPlayer earth_map;
 	double death_star_angle = 0.0; 
 	double image_rotate = 0.0;
@@ -136,6 +139,7 @@ private:
 	ofPoint point_listener;
 	ofPoint ambient_environment;
 	ofPoint earth_video;
+	ofPoint ambient_videos_loc[4];
 
 	ofSpherePrimitive song_sphere[2];
 	ofSpherePrimitive earth;
@@ -163,12 +167,20 @@ private:
 	
 	// Variables for Earth View 
 
+	bool are_locations_available = false;
 	int earth_view_point_radius = 5;
 	int number_of_earth_points = 0;
 
 	vector <ofPoint> earth_view_points;
 	vector <string> country_name;
-	ofPoint pixel_pos;
+	vector<ofPoint>pixel_pos;
+	vector <float> latitude;
+	vector<float> longitude;
+	vector<string> file_names;
+	vector<string> activity;
+	vector<string> location;
+	vector<string> time_recorded;
+	int file_counter = 0;
 	
 	
  	struct country_points {
@@ -185,6 +197,16 @@ private:
 	country_points earth_data; 
 	
 
+	ofImage cork_board;
+	ofImage crumpled_paper;
+	ofImage pin;
+	ofImage boat;
+
+	ofImage text_box;
+	ofTrueTypeFont	verdana14;
+
+	bool*mouse_hover ;
+	int which_point;
 	
 };
 

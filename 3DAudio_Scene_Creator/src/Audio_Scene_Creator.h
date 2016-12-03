@@ -73,6 +73,7 @@ public:
 	Audio_Scene_Creator();
 
 	void add_source(double X, double Y, double Z, int which_source);
+	void load_earth_point_files(string file_names, int which_source);
 	void real_time_proc();
 	void move_source(int X, int Y, int Z, int which_source);
 	void move_song();
@@ -96,7 +97,7 @@ public:
 
 	void pitch_shifting(int val);
 	void change_gain(int which_source, int val);
-	void delete_sources();
+	void delete_earth_point_sources();
 	void delete_all();
 
 	~Audio_Scene_Creator();
@@ -109,6 +110,8 @@ public:
 	bool real_time_effect = false;
 	int which_real_time_reverb;
 
+	string names[26];
+
 private:
 
 	int sample_rate;
@@ -117,8 +120,8 @@ private:
 	int listener_x, listener_y, listener_z;
 
 	
-	ALuint source[18];
-	ALuint buffer[18];
+	ALuint source[26];
+	ALuint buffer[26];
 	ALuint real_time_buffer;
 	ALuint real_time_source;
 	ALuint slot[8];
@@ -129,7 +132,7 @@ private:
 	double max_pitch_shift = 4.0;
 	double max_gain = 7;
 	string base_folder = "../bin/data/Sounds/";
-	string names[20];
+	
 
 	ALuint helloBuffer[10], helloSource[1];
 	
