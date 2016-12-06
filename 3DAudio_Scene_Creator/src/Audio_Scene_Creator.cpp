@@ -16,6 +16,7 @@ Audio_Scene_Creator::Audio_Scene_Creator()
 
     device[0] = alcOpenDevice(NULL);
 
+
 	if (!device) {
 
 		cout << "Device Not Available" << endl;
@@ -120,9 +121,11 @@ void Audio_Scene_Creator::add_doppler_effect(int speed_of_sound, int doppler_eff
 
 void Audio_Scene_Creator::change_gain(int which_source, int val) {
 
+
 	double new_gain;
 	new_gain = (max_gain*val)/ 127 ;
 	alSourcef(source[which_source], AL_GAIN, new_gain);
+
 
 }
 
@@ -262,7 +265,7 @@ void Audio_Scene_Creator::real_time_proc() {
 	   alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
 	   alSourcef(helloSource[0], AL_PITCH, real_time_pitch);
 	   alSourcef(helloSource[0], AL_GAIN, 1.5);
-	   alSourcef(helloSource[0], AL_ROLLOFF_FACTOR, 7);
+	   alSourcef(helloSource[0], AL_ROLLOFF_FACTOR, 9);
 	   alSourcef(helloSource[0], AL_REFERENCE_DISTANCE, 300);
 	   alSourcef(helloSource[0], AL_MAX_DISTANCE, 800);
 
@@ -280,7 +283,6 @@ void Audio_Scene_Creator::real_time_proc() {
 			   real_time_effect = false;
 			   cout << "Effect added"<<endl;
 		   }
-
 
 		   alSourcef(helloSource[0], AL_PITCH, real_time_pitch);
 		   alSource3f(helloSource[0], AL_POSITION, X_real_time, Y_real_time, Z_real_time);

@@ -103,6 +103,7 @@ public:
 	~Audio_Scene_Creator();
 
 	bool done = false;
+	bool set_gain_zero = false;
 	double X_real_time;
 	double Y_real_time;
 	double Z_real_time;
@@ -110,7 +111,7 @@ public:
 	bool real_time_effect = false;
 	int which_real_time_reverb;
 
-	string names[26];
+	string names[28];
 
 private:
 
@@ -120,8 +121,8 @@ private:
 	int listener_x, listener_y, listener_z;
 
 	
-	ALuint source[26];
-	ALuint buffer[26];
+	ALuint source[28];
+	ALuint buffer[28];
 	ALuint real_time_buffer;
 	ALuint real_time_source;
 	ALuint slot[8];

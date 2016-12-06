@@ -12,6 +12,7 @@ class ofApp : public ofBaseApp, public ofxMidiListener {
 
 public:
 
+	
 	void setup();
 	void update();
 	void draw();
@@ -44,24 +45,20 @@ public:
 	void move_drums();
 	void draw_environments();
 	void add_effect_real_time(int);
-	void video_initialize();
+	void earth_video_initialize();
 	void normal_view_drag_events(int x , int y);
-	void load_ambient_videos();
+	void load_reverb_videos();
+
+	void initialize_instrument_size();
 
 
 	// Earth View Functions 
 	void create_earth_view_points(int x, int y);
-	void draw_earth_view_points();
+	void draw_earth_view_points(double radius);
 	void lat_long_to_x_y();
 	string get_country_name(int x, int y);
 
-	void initialize_country_points();
-	bool if_India(int x, int y);
-	bool if_Syria(int x, int y);
-	bool if_Monterey(int x, int y);
-	bool if_Florida(int x, int y);
-	bool if_Montreal(int x, int y);
-	bool if_Nova_Scotia(int x, int y);
+	
 	void audio_file_name_parser();
 	void get_file_names_from_dir();
 	void initialize_earth_point_sources();
@@ -74,14 +71,13 @@ private:
 	int border_len = 80 ;
 
 	int buffersize = 256;
-	int circle_width = 90;
-	int circle_height = 90;
+	int*circle_width;
+	int*circle_height;
 
 	int ambient_env_radius = 150;
 	int listener_radius = 30;
 
 	ofImage mic_off;
-	ofImage alien;
 	ofImage mic_on;
 	ofImage earth_texture;
 	ofImage song[2];
@@ -94,6 +90,8 @@ private:
 	double song_rotate = 0.0;
 	double earth_rotate = 0.0;
 	double dist_threshold = 100;
+
+	bool is_midi_instrument_drag_event = false;
 	bool draw_mic_on = false;
 	bool draw_mic_off = true;
 	bool is_mic_on = false;
@@ -149,10 +147,11 @@ private:
 	int nTri;		//The number of triangles
 	int nVert;	//The number of the vertices equals nTri * 3
 
-	float Rad = 600;	//The sphere's radius
+	float Rad = 620;	//The sphere's radius
 	float rad = 25;
 
 	int circle_speed = 0;
+	double color_change = 2;
 
 	ofxMidiIn midiIn;
 	ofxMidiMessage midiMessage;
@@ -162,7 +161,7 @@ private:
     Convolution_Thread audio_thread;
 	
 	
-	ofSoundPlayer alien_sound[4],point_selection;
+	ofSoundPlayer alien_sound[4],point_selection,welcome;
 
 	
 	// Variables for Earth View 
@@ -181,28 +180,15 @@ private:
 	vector<string> location;
 	vector<string> time_recorded;
 	int file_counter = 0;
-	
-	
- 	struct country_points {
-
-		ofPoint Syria[2];
-		ofPoint India[2];
-		ofPoint Monterey[2];
-		ofPoint Nova_Scotia[2];
-		ofPoint Montreal[2];
-		ofPoint Florida[2];
-
-	}; 
-
-	country_points earth_data; 
+ 
 	
 
 	ofImage cork_board;
 	ofImage crumpled_paper;
-	ofImage pin;
-	ofImage boat;
 
-	ofImage text_box;
+	
+
+	
 	ofTrueTypeFont	verdana14;
 
 	bool*mouse_hover ;

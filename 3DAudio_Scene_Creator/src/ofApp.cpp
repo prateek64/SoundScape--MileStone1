@@ -5,50 +5,66 @@
 //--------------------------------------------------------------
 
 
+
 // Initializes images, sounds, framerate of the application and other input files.
 
 using namespace boost::filesystem;
 using namespace std;
 
+
 void ofApp::setup() {
 
+	initialize_instrument_size();
 
 	sound_stream.setup(this, 0, 1, 44100, buffersize, 2); // 2 output and 1 input channel with a sampling rate of 44100
-	file_init();
-	ofSetBackgroundColor(0);
-	ofSetFullscreen(true);
-	ofSetFrameRate(30);
-	ofEnableSmoothing();
-
 	sound_stream.printDeviceList();
 	sound_stream.setDeviceID(0);
+
+	file_init(); // Initializes all the files 
+
+
+	// Initializes the GUI screen parameters
+	ofSetBackgroundColor(0); // Sets the background color to be black 
+	ofSetFullscreen(true);
+	ofSetFrameRate(40); 
+	ofEnableSmoothing();
+	ofEnableDepthTest();
+
+	// Initializing vector size to be equal to buffer size( this will be used to store real-time audio input of buffersize into this vector  
+
 	left.resize(buffersize);
 	left.assign(buffersize, 0.0);
 
+
+	
 	get_file_names_from_dir();
 	audio_file_name_parser();
 	lat_long_to_x_y();
 
 
 	midiSetup();  // Setup for midi input 
+
 	intitialize_drumkit_location();
-	ofEnableDepthTest();
-	death_star();
+	
 
-	create_sounds.reverb_array();
-	create_sounds.add_effects();
-
+	create_sounds.reverb_array(); // Initializes the reverb array with all the different OpenAl soft reverbs 
+	create_sounds.add_effects(); // Connects all the OpenAL reverbs with OpenAL auxillary effect slots
 
 
+
+	// Initializes drag value for each midi instrument icon
 
 	for (int i = 0; i < number_of_sources; i++) {
 
 		dragged[i] = false;
+
 	}
 
 
-	point_listener.x = 150;
-	point_listener.y = ofGetScreenHeight() / 2;
+	// Initial position of the alien listener graphic in the GUI
+
+	point_listener.x = 300;
+	point_listener.y = ofGetScreenHeight() / 4;
 
 	double init_listener_x, init_listener_y, init_listener_z;
 
@@ -56,18 +72,19 @@ void ofApp::setup() {
 	init_listener_x = point_listener.x - ofGetScreenWidth() / 2;
 	init_listener_z = point_listener.y - ofGetScreenHeight() / 2;
 	init_listener_y = 5;
+
+	// Moves the listener to the initial position in the 3D audio scene that we are creating here
+
 	create_sounds.move_listener(init_listener_x, init_listener_y, init_listener_z);
 
 
-	song_sphere[0].setRadius(40);
-	song_sphere[0].mapTexCoords(0, 0, song[0].getWidth(), song[0].getHeight());
-
-	song_sphere[1].setRadius(40);
-	song_sphere[1].mapTexCoords(0, 0, song[1].getWidth(), song[1].getHeight());
+    // Initializes the earth sphere parameters
 
 	earth.setRadius(150);
 	earth.setResolution(45);
-	earth.mapTexCoords(0, 0, earth_texture.getWidth(), earth_texture.getHeight());
+	earth.mapTexCoords(0, 0, earth_texture.getWidth(), earth_texture.getHeight()); 
+
+	// Initial position of the ambient environment graphic in the GUI
 
 	ambient_environment.x = ofGetScreenWidth() - 300;
 	ambient_environment.y = 300;
@@ -79,34 +96,67 @@ void ofApp::setup() {
 	z_init = ambient_environment.y - ofGetScreenHeight() / 2;
 	y_init = rand() % 50 - 25;
 
+	// Initial position of the ambient environment(read through mic of the device) in the 3D audio scene that we are creating 
 
 	if (!audio_thread.isThreadRunning()) {
-
+		
 		audio_thread.setdone_false();
 		audio_thread.setpos(x_init, y_init, z_init);
 		audio_thread.startThread();
 
 	}
 
-	load_ambient_videos();
+	
+	// Initializes the earth view video parameters 
 
-	video_initialize();
-	initialize_country_points();
+	earth_video_initialize();
 
 
-	ofTrueTypeFont::setGlobalDpi(72);
+	// Initializes the verdana14 font object parameters
+
+	ofTrueTypeFont::setGlobalDpi(84);
 	verdana14.load("verdana.ttf", 14, true, true);
 	verdana14.setLineHeight(18.0f);
 	verdana14.setLetterSpacing(1.037);
+
+
+//	welcome.setSpeed(1.2);
+//	welcome.setVolume(0.4);
+//	welcome.play();
+	
 	
 }
 
 
-	
+/*
 
-// Initializes the image files for the drum kit 
+*********************************************Initializes midi instrument icon width and height*****************************************************************************
+Each midi note icon gets its width and height. This will be employed later on as we modify the width and height of each instrument icon individually later on in the program
 
-void ofApp::video_initialize() {
+*/
+
+
+void ofApp::initialize_instrument_size() {
+
+	circle_width = new int[number_of_sources]; // Array of icon width sizes 
+	circle_height = new int[number_of_sources]; // Array of icon height sizes
+
+
+// Initial instrument icon sizes in pixels 
+
+	for (int i = 0; i < number_of_sources; i++) {
+
+		circle_width[i] = 120;
+		circle_height[i] = 120;
+
+	}
+
+}
+
+
+// This method initializes the earth view video location, volume , video speed and loop state 
+
+void ofApp::earth_video_initialize() {
 
 	earth_video.x = 0;
 	earth_video.y = 0;
@@ -116,68 +166,62 @@ void ofApp::video_initialize() {
 	earth_map.setSpeed(0.5);
 	earth_map.setLoopState(OF_LOOP_NORMAL);
 
-
-
-
 }
 
 
+// Initializes and loads all the image files, videos and sound files 
+
 void ofApp::file_init() {
 
+	load_reverb_videos(); // loads the videos into the GUI that depict the different reverbs that can be used
 
 	mic_off.load("Images/mic_state_off.png");
 	mic_on.load("Images/mic_state_on.png");
-	song[0].loadImage("Images/gay_flag.png");
-	song[1].loadImage("Images/gay_flag.png");
 
 	earth_texture.loadImage("Images/earth_texture.jpg");
 
-	acoustic_env[0].loadImage("Images/saint_paul.jpg");
-	acoustic_env[1].loadImage("Images/underwater.jpg");
-	acoustic_env[2].loadImage("Images/auditorium.jpg");
-	acoustic_env[3].loadImage("Images/psychotic.jpg");
-
-
+	// Loads the images for the midi note icons into the GUI
 
 	for (int i = 0; i < number_of_sources; i++) {
 
-		drumkit_parts[i].loadImage("Images/circles/circle_" + to_string(i + 1) + ".jpg");
-
+		drumkit_parts[i].loadImage("Images/Bokeh.png");
+		
 	}
-
 
 	earth_map.loadMovie("video/earth_map_2.mp4");
 
-	load_ambient_videos();
+	
+	// Loads the sound files for the alien movement ( up , down , left and right )
 
 	for (int i = 0; i < 4; i++) {
 
 		alien_sound[i].load("Sounds/Alien/alien_sound_" + to_string(i + 1) + ".wav");
 		alien_sound[i].setVolume(0.1);
 		
-
 	}
 		
-	point_selection.load("Sounds/Bells/selection.wav");
-	point_selection.setVolume(0.1);
-
-	cork_board.load("Images/cork_board.jpg");
-	crumpled_paper.load("Images/crumpled_paper.jpg");
-	pin.loadImage("Images/board_pin.jpg");
-	boat.loadImage("Images/boat_1.png");
 	
+	welcome.load("Sounds/Alien/welcome.wav"); // Welcome Message audio file 
+	cork_board.load("Images/cork_board.jpg");
+	crumpled_paper.load("Images/crumpled_paper_1.jpg");
 
+	
 }	
 
+// Method to load the videos into the GUI that depict the different reverbs
 
-void ofApp::load_ambient_videos() {
+void ofApp::load_reverb_videos() {
 
+
+	// Loads all the reverb video 
 	ambient_environment_videos[0].loadMovie("video/church.mp4");
 	ambient_environment_videos[1].loadMovie("video/underwater.mp4");
 	ambient_environment_videos[2].loadMovie("video/auditorium.mp4");
+	ambient_environment_videos[3].loadMovie("video/psychotic.mp4");
 	
 
-	for (int i = 0; i < 3; i++) {
+	// Initializes the reverb video parameters like volume, speed and loop state 
+	for (int i = 0; i < 4; i++) {
 
 		ambient_environment_videos[i].setVolume(0);
 		ambient_environment_videos[i].setSpeed(1);
@@ -185,6 +229,7 @@ void ofApp::load_ambient_videos() {
 
 	}
 
+	// Initializes the reverb video locations 
 	for (int i = 0; i < 4; i++) {
 
 		ambient_videos_loc[i].z = 10;
@@ -205,7 +250,8 @@ void ofApp::load_ambient_videos() {
 	}
 
 
-	for (int i = 0; i < 3; i++) {
+	// Pauses all the revebrb videos at GUI initialization
+	for (int i = 0; i < 4; i++) {
 
 		ambient_environment_videos[i].play();
 		ambient_environment_videos[i].setPaused(true);
@@ -244,7 +290,7 @@ void ofApp::midiSetup() {
 }
 
 
-// Initializes the drum kit sound locations in the 3D space (which are then rendered using HRTF)
+// Initializes the drum kit sound locations in the 3D audio space that is being created (which are then rendered using HRTF through OpenAL soft)
 
 void ofApp::intitialize_drumkit_location() {
 
@@ -259,32 +305,15 @@ void ofApp::intitialize_drumkit_location() {
 		drum_pos_x[i] = (radius_of_rev - 50)*cos(2*PI*i/drum_sources) - 50 ;
 		drum_pos_z[i] = (radius_of_rev - 50)*sin(2*PI*i / drum_sources) ;
 		drum_pos_y[i] = rand()%((int)(drum_pos_x[i]/2 + drum_pos_z[i]/2)) - radius_of_rev/2 ;
-		create_sounds.add_source(drum_pos_x[i], drum_pos_y[i], drum_pos_z[i], i);
+		create_sounds.add_source(drum_pos_x[i], drum_pos_y[i], drum_pos_z[i], i); // Method to add sound sources in the 3D space 
 
 	}
 
 
-
-
 }
 
+// Method to draw the the reverb videos on the GUI. This function gets called in the ofApp draw() function 
 
-// Method to draw the drum kit parts in the GUI 
-
-
-void ofApp::initialize_earth_point_sources() {
-
-
-	for (int i = 0; i < pixel_pos.size(); i++) {
-
-		create_sounds.load_earth_point_files(file_names[i],i+17) ;
-		create_sounds.add_source(pixel_pos[i].x - ofGetScreenWidth()/2, 0 , pixel_pos[i].y - ofGetScreenHeight()/2, i + number_of_sources);
-		create_sounds.play_a_source(i + number_of_sources);
-	}
-
-	
-
-}
 void ofApp::draw_environments() {
 
 	
@@ -294,13 +323,19 @@ void ofApp::draw_environments() {
 	ofDrawLine(ofGetScreenWidth() - 604, ofGetScreenHeight() - 400, ofGetScreenWidth(), ofGetScreenHeight() - 400);
 	ofSetColor(211, 211, 211);
 	
-	for (int i = 0; i < 3; i++) {
+	// Draws the reverb videos on the GUI at certain locations given by ambient_video_loc 
+
+	for (int i = 0; i < 4; i++) {
 
 		ambient_environment_videos[i].draw(ambient_videos_loc[i], 300, 200);
 	}
 
-	acoustic_env[3].draw(ambient_videos_loc[3], 300, 200);
+	
 }
+
+
+// Method to draw the ambient environment graphics in the GUI . It is an abstract shape that depicts the ambient environment around us. 
+
 void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, int color_choice) {
 
 
@@ -311,7 +346,6 @@ void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, in
 	ofPolyline circle_sin;
 	ofPolyline circle_cos;
 	ofPolyline circle_un_cos;
-
 
 
 	int wave_height = radius*0.1*(scaledVol)*20;
@@ -337,6 +371,7 @@ void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, in
 		float y = sin(angle + speed_increment)*radius;
 
 		// drawing sine wave only on a part of the circle
+
 		if (i<sine_pct*circle_resolution)
 		{
 			x = cos(angle + speed_increment)*(radius + raidus_addon);
@@ -359,6 +394,7 @@ void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, in
 
 
 		//increment a wave angle to flip the wave
+
 		raidus_addon = 1.5*wave_height*cos((angle + TWO_PI / 3 + 2*speed_increment)*anim_shape);
 		x = cos(angle + speed_increment)*(radius_un_cos);
 		y = sin(angle + speed_increment)*(radius_un_cos);
@@ -420,26 +456,40 @@ void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, in
 
 
 }
+
+//  Method to draw the midi instrument icons on the GUI
+
 void ofApp::draw_scene() {
 
-	double theta = 0,x,y;
+	double theta = 0;
 
-	
-	
 	for (int i = 0; i < number_of_sources; i++) {
+
+		ofSetColor(sin(color_change /200) * 255, sin(color_change/120)*100 , cos(color_change / 240)*200); // midi note icon color 
+		
+		color_change = color_change + 1;
+
+		// Initial location of the midi note icons 
 
 		if(!dragged[i]){
 		
+
+
 			drum_kit[i].x = (radius_of_rev -30)*cos(2 * PI*i / number_of_sources);
 			drum_kit[i].y = (radius_of_rev-30)*sin(2 * PI*i / number_of_sources);
-			drumkit_parts[i].draw(drum_kit[i].x -50 , drum_kit[i].y -50 , i*0.5, circle_width, circle_height);
+			drumkit_parts[i].draw(drum_kit[i].x -50 , drum_kit[i].y -50 , i*0.5, circle_width[i], circle_height[i]);
+
+
 
 		}
+
+
+		// Location of the midi note icons when the icons have been dragged 
 
 		else  {
 
 			
-			drumkit_parts[i].draw(drum_kit[i].x - 50, drum_kit[i].y - 50, i*0.5, circle_width, circle_height);
+			drumkit_parts[i].draw(drum_kit[i].x - 50, drum_kit[i].y - 50, i*0.5, circle_width[i], circle_height[i]);
 
 		
 	  }
@@ -451,37 +501,60 @@ void ofApp::draw_scene() {
 }
 
 
-// Initializes the image files other than that contribute towards sound 
-
-
-
 //--------------------------------------------------------------
+
+// ofApp function that updates the draw function and the variables within the update callback 
+
 void ofApp::update() {
 
 	ofSoundUpdate();
 
-	for (int i = 0; i < 3; i++) {
+	// If midi instruments are not being dragged on the GUI 
+
+	if (!is_midi_instrument_drag_event) {
+
+		for (int i = 0; i < number_of_sources; i++) {
+
+
+			if (circle_width[i] > 120) {
+
+				circle_width[i] = circle_width[i] - 4;
+				circle_height[i] = circle_height[i] - 4;
+			}
+
+
+		}
+
+
+	}
+
+	// Updates the reverb video frames on the GUI 
+
+	for (int i = 0; i < 4; i++) {
 
 		ambient_environment_videos[i].update();
 		
 	}
 
-	earth_map.update();
+	earth_map.update(); // Updates the earth view video frames 
+
 
 	if (is_mic_on) {
 
-		scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
+		scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true); // Converts the audio input buffer values to within 0-1 range 
 		move_drums();
 
 	}
 
-	death_star_angle = death_star_angle + 3.5;
+	death_star_angle = death_star_angle + 3.5; // Rotation angle of the death star 
     
 	image_rotate = image_rotate + 4;
 	theta = theta + 0.05;
 
-	song_rotate = song_rotate + 2;
-	earth_rotate += abs(10*scaledVol*4);
+	earth_rotate += abs(10*scaledVol*4); // Rotation  of the earth 
+
+
+	// If earth view is not on 
 
 	if (!is_earth_simulation_playing) {
 
@@ -491,13 +564,18 @@ void ofApp::update() {
 			is_earth_simulation_playing = true;
 			earth_map.play();
 			initialize_earth_point_sources();
+
 		}
 
+
 	}
+
 	
 	earth_view_point_radius = 5 * sin(5 * theta) + 10;
 }
 
+
+// Method that creates the revolving circles in the center of the GUI 
 
 void ofApp::death_star() {
 
@@ -554,7 +632,8 @@ void ofApp::death_star() {
 }
 
 
-// Method to move the drum according to the mic input 
+// Method that moves the midi instruments icons in the GUI according to the RMS value of the real time audio input 
+
 void ofApp::move_drums() {
 
 	double distance[4]; 
@@ -567,26 +646,24 @@ void ofApp::move_drums() {
 
 		distance[0] = sqrt(pow(drum_kit[i].x, 2) + pow(drum_kit[i].y, 2));
 
-		distance[1] = sqrt(pow(drum_kit[i].x + circle_width, 2) + pow(drum_kit[i].y, 2));
-		distance[2] = sqrt(pow(drum_kit[i].x + circle_width, 2) + pow(drum_kit[i].y + circle_height, 2));
-		distance[3] = sqrt(pow(drum_kit[i].x, 2) + pow(drum_kit[i].y + circle_width, 2));
+		distance[1] = sqrt(pow(drum_kit[i].x + circle_width[i], 2) + pow(drum_kit[i].y, 2));
+		distance[2] = sqrt(pow(drum_kit[i].x + circle_width[i], 2) + pow(drum_kit[i].y + circle_height[i], 2));
+		distance[3] = sqrt(pow(drum_kit[i].x, 2) + pow(drum_kit[i].y + circle_width[i], 2));
 
-		if (distance[0] > Rad - 20 || distance[1] > Rad - 20 || distance[2] > Rad - 20 || distance[3] > Rad - 20) {
+		if (distance[0] > Rad - 20 || distance[1] > Rad - 20 || distance[2] > Rad - 20 || distance[3] > Rad - 20) { // Keeps the moving icons within a certain area
 
 			change_pos_x[i] = -change_pos_x[i];
 			change_pos_y[i] = -change_pos_y[i];
 
 		}
-
-
 		
 	}
-
 
 }
 
 
-// Method to move drums sounds  in the 3D space 
+// Method to move the midi notes in the 3D audio scene around your head 
+
 void ofApp::change_drum_pos(int which_drum) {
 
 
@@ -598,7 +675,8 @@ void ofApp::change_drum_pos(int which_drum) {
 }
 
 
-// Methods to play the midi kit in 3D space
+// Method to move the midi instrument notes along a certain path in the 3D Audio Scene around your head
+
 void ofApp::play_midi_drumkit() {
 
 	if (midiMessage.status == 144) {
@@ -626,39 +704,46 @@ void ofApp::play_midi_drumkit() {
 		}
 
 
-		create_sounds.move_source(drum_pos_x[midiMessage.pitch], drum_pos_y[midiMessage.pitch], drum_pos_z[midiMessage.pitch], midiMessage.pitch);
-		create_sounds.play_a_source(midiMessage.pitch);
+		create_sounds.move_source(drum_pos_x[midiMessage.pitch], drum_pos_y[midiMessage.pitch], drum_pos_z[midiMessage.pitch], midiMessage.pitch); // Method to move the soundd sources in 3D space
+		create_sounds.play_a_source(midiMessage.pitch); // Method to play a certain midi note ( given by midi pitch ) in 3D 
 
 	}
 
 
 }
-// Takes in the incoming midi messages 
 
+
+// Method that gets called whenever there is a MIDI message input 
 
 void ofApp::newMidiMessage(ofxMidiMessage& msg) {
 
-	// make a copy of the latest message
-	midiMessage = msg;
-	// play_midi_drumkit();
+	// If earth view is not on. ( This is done to prevent the midi notes from playing in the earth view mode )
 
-	if (midiMessage.status == 144) {
-
-		create_sounds.move_source(drum_pos_x[midiMessage.pitch], drum_pos_y[midiMessage.pitch], drum_pos_z[midiMessage.pitch], midiMessage.pitch);
-		create_sounds.change_gain(midiMessage.pitch, midiMessage.velocity);
-		create_sounds.play_a_source(midiMessage.pitch);
+	if (!is_earth_simulation_playing) {
 		
+		midiMessage = msg;
+		
+
+		if (midiMessage.status == 144) {
+
+			create_sounds.move_source(drum_pos_x[midiMessage.pitch], drum_pos_y[midiMessage.pitch], drum_pos_z[midiMessage.pitch], midiMessage.pitch);
+			create_sounds.change_gain(midiMessage.pitch, midiMessage.velocity);
+			create_sounds.play_a_source(midiMessage.pitch);
+
+		}
+
+		if (midiMessage.control == 1) {
+
+			create_sounds.pitch_shifting(midiMessage.value);
+
+		}
+
+		audio_thread.change_pitch(midiMessage.value);
 	}
-
-	if (midiMessage.control == 1) {
-
-		create_sounds.pitch_shifting(midiMessage.value);
-
-	}
-
-	audio_thread.change_pitch(midiMessage.value);
 }
 
+
+// Method to add reverb to the real time audio input through the convolution thread (using Fast Convolution method) 
 
 void ofApp::add_effect_real_time(int val) {
 
@@ -666,9 +751,14 @@ void ofApp::add_effect_real_time(int val) {
 
 }
 
+// Method that is called when the mouse is dragged in the normal view mode ( not in the earth view mode )
+
 void ofApp::normal_view_drag_events(int x, int y) {
 
+
 	double x_init, y_init, z_init;
+
+	// If the listener is being dragged 
 
 	if (sqrt(pow(point_listener.x - x, 2) + pow(point_listener.y - y, 2)) <= listener_radius + 80) {
 
@@ -677,6 +767,8 @@ void ofApp::normal_view_drag_events(int x, int y) {
 
 	}
 
+
+	// If the ambient environment is being dragged 
 
 	else if (sqrt(pow(x - ambient_environment.x, 2) + pow(y - ambient_environment.y, 2)) <= ambient_env_radius) {
 
@@ -697,16 +789,29 @@ void ofApp::normal_view_drag_events(int x, int y) {
 	}
 
 
+	// If the midi note icons are being dragged 
+
 	else {
+
+
 
 		for (int i = 0; i < number_of_sources; i++) {
 
-			if (abs(x - drum_kit[i].x - ofGetScreenWidth() / 2) <= circle_width && abs(y - drum_kit[i].y - ofGetScreenHeight() / 2) <= circle_height) {
+			if (abs(x - drum_kit[i].x - ofGetScreenWidth() / 2) <= circle_width[i]  && abs(y - drum_kit[i].y - ofGetScreenHeight() / 2) <= circle_height[i] ) {
 
+				is_midi_instrument_drag_event = true;
 				drum_kit[i].x = x - ofGetScreenWidth() / 2;
 				drum_kit[i].y = y - ofGetScreenHeight() / 2;
 				change_drum_pos(i);
 				dragged[i] = true;
+
+				if (circle_width[i] <= 170) {
+
+					circle_width[i] = circle_width[i] + 4;
+					circle_height[i] = circle_width[i] + 4;
+					
+				}
+
 				break;
 
 			}
@@ -716,12 +821,12 @@ void ofApp::normal_view_drag_events(int x, int y) {
 	}
 
 }
+
+// Callback function to receive the real time audio input 
+
 void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
 
-	// void *buf = malloc(bufferSize);
-	
-	
-	
+	// Checks if the mic is on 
 	if (is_mic_on) {
 
 			
@@ -731,6 +836,7 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
 		int numCounted = 0;
 		
 		//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
+
 		for (int i = 0; i < bufferSize; i++) {
 
 			left[i] = input[i];
@@ -746,16 +852,10 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
 		smoothedVol *= 0.93;
 		smoothedVol += 0.07 * curVol;
 
-		//buf = input;
-	//	in = &left[0];
-	 //   create_sounds.real_time_proc(-5, 5, 5, input);
-		//free((void*)buf);
-
-		
 
 	}
 
-	// create_sounds.real_time_proc(-10, 10, 10);
+
 	
 
 }
@@ -766,6 +866,25 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels) {
 ******************************************************************************************************************************
 */
 
+
+
+// Initializes the earth view sound sources (recorded audio from different locations)   
+
+void ofApp::initialize_earth_point_sources() {
+
+
+	for (int i = 0; i < pixel_pos.size(); i++) {
+
+		create_sounds.load_earth_point_files(file_names[i], i + 17);
+		create_sounds.add_source(pixel_pos[i].x - ofGetScreenWidth() / 2, 0, pixel_pos[i].y - ofGetScreenHeight() / 2, i + number_of_sources);
+		create_sounds.play_a_source(i + number_of_sources);
+	}
+
+}
+
+
+
+// Function that maps latitude and longitude values to pixel positions on the earth map 
 
 void ofApp::lat_long_to_x_y() {
 
@@ -788,114 +907,15 @@ void ofApp::lat_long_to_x_y() {
 	are_locations_available = true;
 	
 }
-void ofApp:: initialize_country_points() {
-
-	earth_data.India[0].x = 1807;
-	earth_data.India[0].y = 458;
-	earth_data.India[1].x = 1961;
-	earth_data.India[1].y = 651;
-	
-	earth_data.Monterey[0].x = 334;
-	earth_data.Monterey[0].y = 423;
-
-	earth_data.Florida[0].x = 658;
-	earth_data.Florida[0].y = 500;
-	
-	earth_data.Syria[0].x = 1562;
-	earth_data.Syria[0].y = 436;
-
-}
-
-bool ofApp::if_India(int x, int y) {
-
-	if (x >= earth_data.India[0].x && x <= earth_data.India[1].x  && y >= earth_data.India[0].y && y <= earth_data.India[1].y) {
-
-		point_selection.play();
-		return true;
-	}
-
-	return false;
-
-}
-
-bool ofApp::if_Syria(int x, int y) {
 
 
-	if (sqrt(pow(x - earth_data.Syria[0].x, 2) + pow(y - earth_data.Syria[0].y, 2)) < 20) {
-		point_selection.play();
-		return true;
-	}
 
-	return false;
-}
-
-bool ofApp::if_Monterey(int x, int y) {
-
-	if (sqrt(pow(x - earth_data.Monterey[0].x, 2) + pow(y - earth_data.Monterey[0].y, 2)) < 20) {
-		point_selection.play();
-		return true;
-	}
-
-	return false;
-}
-
-bool ofApp::if_Nova_Scotia(int x, int y) {
-
-
-	return false;
-}
-
-bool ofApp::if_Florida(int x, int y) {
-
-	if (sqrt(pow(x - earth_data.Florida[0].x, 2) + pow(y - earth_data.Florida[0].y, 2)) < 20) {
-		point_selection.play();
-		return true;
-	}
-
-	return false;
-}
-
-string ofApp::get_country_name(int x, int y) {
-
-	if (if_India(x, y))
-		return "India";
-
-	else if (if_Syria(x, y)) {
-
-		
-		return "Syria";
-	}
-		
-
-	else if (if_Monterey(x, y))
-		return "Monterey";
-
-	else if (if_Florida(x, y))
-		return "Florida";
-
-
-	return "No Data";
-}
-void ofApp::create_earth_view_points(int x, int y) {
-
-	
-	number_of_earth_points++; 
-
-	earth_view_points.resize(number_of_earth_points);
-	country_name.resize(number_of_earth_points);
-	
-
-	earth_view_points[number_of_earth_points - 1].x = x;
-	earth_view_points[number_of_earth_points - 1].y = y;
-	country_name[number_of_earth_points - 1] = get_country_name(x,y);
-	
-}
-
+// Updates the information box with the data of the audio ( activity in the audio, location and time recorded) over which the mouse is hovered in the earth view 
 
 void ofApp::update_place_info_box(int x ) {
 
 	ofSetColor(255, 255, 255);
-	ofDrawRectRounded(0,0, 350, 80, 10);
+	ofDrawRectRounded(0,0, 400, 80, 10);
 	ofSetColor(245, 58, 135);
 	ofTranslate(0, 0, 10);
 	verdana14.drawString("Activity : " + activity[x], 30, 20);
@@ -906,9 +926,11 @@ void ofApp::update_place_info_box(int x ) {
 
 }
 
-void ofApp::draw_earth_view_points() {
+// Method that draws a graphic to show on the earth map where the different audio have been recorded . It acts as a pointer to all the recorded audio on the earth map 
 
-	double old_point_x = earth_view_point_radius, old_point_y = 3;
+void ofApp::draw_earth_view_points(double radius) {
+
+	double old_point_x = radius, old_point_y = 3;
 	double new_point_x, new_point_y;
 	double angle; 
 	ofSetLineWidth(7);
@@ -919,8 +941,8 @@ void ofApp::draw_earth_view_points() {
 
 		
 		ofSetColor(255 * sin(3 * theta), 255 * sin(theta), 255 * cos(5 * theta));
-		new_point_x = earth_view_point_radius*cos(angle);
-		new_point_y = 3 + earth_view_point_radius*sin(angle);
+		new_point_x = radius*cos(angle);
+		new_point_y = 3 + radius*sin(angle);
 
 		if (i < 39)
 			ofDrawLine(old_point_x, old_point_y, new_point_x, new_point_y);
@@ -930,16 +952,17 @@ void ofApp::draw_earth_view_points() {
 
 		}
 
-	old_point_x = -earth_view_point_radius;
+	old_point_x = -radius;
 	old_point_y = -3; 
+
 	for (int i = 0; i < 40; i++) {
 
 		angle =  PI*i / 40;
 
 
 		ofSetColor(255 * sin(3 * theta), 255 * sin(theta), 255 * cos(5 * theta));
-		new_point_x = earth_view_point_radius*cos(PI+angle);
-		new_point_y = -3 + earth_view_point_radius*sin(PI+angle);
+		new_point_x =radius*cos(PI+angle);
+		new_point_y = -3 + radius*sin(PI+angle);
 
 		if (i < 39)
 			ofDrawLine(old_point_x, old_point_y, new_point_x, new_point_y);
@@ -949,12 +972,10 @@ void ofApp::draw_earth_view_points() {
 
 	}
 
-
-
-	
-
-
 }
+
+
+// This method parses the audio file names to separate the activity, location and time of recording and saves this data in different vectors.
 
 void ofApp::audio_file_name_parser() {
 
@@ -1006,14 +1027,12 @@ void ofApp::audio_file_name_parser() {
 
 		s >> activity[file_counter - 1] >> location[file_counter - 1] >> latitude[file_counter - 1] >> longitude[file_counter - 1] >> time_recorded[file_counter-1];
 
-	
-		
-
 	}
-	
 	
 
 }
+
+// Method that fetches all the ".aiff" audio files from a given directory
 
 void ofApp::get_file_names_from_dir() {
 
@@ -1072,9 +1091,6 @@ void ofApp::get_file_names_from_dir() {
 	}
 
 
-
-
-
 }
 
 /*
@@ -1083,12 +1099,14 @@ void ofApp::get_file_names_from_dir() {
 **************************************************************************************
 */
 
+
+// ofApp method that draws the GUI elements and updates them as the application runs ( it is called everytime update() function is called ) 
+
 void ofApp::draw() {
 
 	
 	
 	int listener_x, listener_y, listener_z;
-
 
 	ofPushMatrix();
 
@@ -1108,20 +1126,7 @@ void ofApp::draw() {
 
 		
 		
-		ofPushMatrix();
-		
-			
-		    ofEnableAlphaBlending();
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			ofTranslate(900, 500);
-			ofSetColor(25, 255,255, 255);
-			boat.setUseTexture(false);
-			boat.draw(0, 0,boat.getWidth(),boat.getHeight());
-			ofDisableAlphaBlending();
 	
-		ofPopMatrix();
-
 		if (mouse_hover[which_point] == true) {
 
 			ofPushMatrix();
@@ -1148,7 +1153,7 @@ void ofApp::draw() {
 					ofPushMatrix();
 					ofTranslate(pixel_pos[i].x, pixel_pos[i].y, 10);
 					ofRotateZ(image_rotate / 2);
-					draw_earth_view_points();
+					draw_earth_view_points(earth_view_point_radius);
 
 					ofPopMatrix();
 				
@@ -1158,6 +1163,16 @@ void ofApp::draw() {
 	}
 
 	else {
+
+
+		ofPushMatrix();
+
+			ofTranslate(300, ofGetScreenHeight() / 4,60);
+			ofRotateZ(image_rotate);
+			draw_earth_view_points(200);
+
+		ofPopMatrix();
+
 
 		ofPushMatrix();
 		ofSetColor(211, 211, 211);
@@ -1190,49 +1205,30 @@ void ofApp::draw() {
 
 		ofPushMatrix();
 
-		ofSetColor(0, 255, 255);
-		ofTranslate(300, ofGetScreenHeight() - 250);
+			ofSetColor(0, 255, 255);
+			ofTranslate(300, ofGetScreenHeight()/2 + 400);
 
-		ofPushMatrix();
-		// ofSetColor(211, 211, 211);
-		ofTranslate(-340, -270, -100);
-		crumpled_paper.draw(0, 0, 500, 600);
-		ofPopMatrix();
+			ofPushMatrix();
+				ofSetColor(211, 211, 211);
+				ofTranslate(-340, -270, -100);
+				crumpled_paper.draw(0, 0, 500, 600);
+			ofPopMatrix();
 
-		ofTranslate(0, 30);
-		ofRotateY(earth_rotate);
+			ofTranslate(0, 30);
+			ofRotateY(earth_rotate);
 
-		earth_texture.getTextureReference().bind();
-		earth.drawWireframe();
-		earth_texture.unbind();
+			earth_texture.getTextureReference().bind();
+			earth.drawWireframe();
+			earth_texture.unbind();
 
 		
 		ofPopMatrix();
+
 
 		ofPushMatrix();
 
 		ofTranslate(300, 300);
 		ofSetColor(211, 211, 211);
-
-
-		ofPushMatrix();
-		ofRotateY(image_rotate);
-		ofTranslate(90 + 90 * sin(theta), 0);
-
-		song[0].getTextureReference().bind();  // Binds the image textures onto the spheres (so they look like planets)
-		song_sphere[0].draw();
-		song[0].unbind();
-		ofPopMatrix();
-
-		ofPushMatrix();
-		ofRotateY(-2 * image_rotate);
-		ofTranslate(-90 + 120 * cos(theta), -0);
-		ofRotateY(image_rotate);
-		song[1].getTextureReference().bind();  // Binds the image textures onto the spheres (so they look like planets)
-		song_sphere[1].draw();
-		song[1].unbind();
-		ofPopMatrix();
-
 
 
 		ofPopMatrix();
@@ -1271,15 +1267,8 @@ void ofApp::draw() {
 		ofTranslate(ofGetScreenWidth() / 2, ofGetScreenHeight() / 2);
 
 		ofPushMatrix();
-		ofSetColor(255, 255, 255);
-		ofTranslate(-200, -200, -100);
-		pin.draw(0, 0, 100, 100);
-		ofPopMatrix();
-
-
-		ofPushMatrix();
 		// ofSetColor(211, 211, 211);
-		ofTranslate(-1050, -1000, -580);
+		ofTranslate(-1050, -1000, -590);
 		crumpled_paper.draw(0, 0, 2000, 2000);
 		ofPopMatrix();
 
@@ -1395,6 +1384,7 @@ void ofApp::draw() {
 
 		ofEnableAlphaBlending();
 		
+		
 		draw_scene();
 
 		ofDisableAlphaBlending();
@@ -1406,28 +1396,28 @@ void ofApp::draw() {
 
 }
 
+
+// ofApp destructor 
 ofApp::~ofApp()
 {
 
 	for (int i = 0; i < 4; i++) {
 
-		alien_sound[i].unload();
-		acoustic_env[i].clear();
+		alien_sound[i].unload(); // Unloads all the alien sounds 
+		
 	}
 
 	for (int i = 0; i < number_of_sources; i++) {
 
-		drumkit_parts[i].clear();
+		drumkit_parts[i].clear(); // Clears all the midi note icons 
 	}
 
-	earth_map.close();
-	mic_off.clear();
+	earth_map.close(); 
+	mic_off.clear();  	
 	mic_on.clear();
-	song[0].clear();
-	song[1].clear();
 
 	audio_thread.setdone_true();
-	audio_thread.stopThread();
+	audio_thread.stopThread(); // Stops the convolution thread 
 	
 	
 
@@ -1438,17 +1428,13 @@ ofApp::~ofApp()
 void ofApp::keyPressed(int key) {
 
 	
-	if (key == OF_KEY_LEFT_SHIFT) {
-
-		
-		// create_sounds.add_effects();
-	
-	}
-
 	if (key == OF_KEY_UP) {
 
+		// Moves the alien up in the GUI 
 
 		point_listener.y = point_listener.y - listener_dy;
+
+		// Plays the alien sound associated with the up movement 
 
 		if (!alien_sound[0].isPlaying()) {
 
@@ -1495,8 +1481,11 @@ void ofApp::keyPressed(int key) {
 
 	}
 
+	// When the R key is pressed ( this key is meant to reset things)
 
 	if (key == 114) {
+
+		// Brings back all the midi note icons to their initial locations 
 
 		if (!is_earth_simulation_playing) {
 
@@ -1505,11 +1494,13 @@ void ofApp::keyPressed(int key) {
 
 				drum_kit[i].x = (radius_of_rev - 30)*cos(2 * PI*i / number_of_sources);
 				drum_kit[i].y = (radius_of_rev - 30)*sin(2 * PI*i / number_of_sources);
-				drumkit_parts[i].draw(drum_kit[i].x - 50, drum_kit[i].y - 50, i*0.5, circle_width, circle_height);
+				drumkit_parts[i].draw(drum_kit[i].x - 50, drum_kit[i].y - 50, i*0.5, circle_width[i], circle_height[i]);
 				dragged[i] = false;
 
 			}
 		}
+
+		// If earth view is on , stop the earth video , delete all the sound sources associated with the earth view and leave the earth view to get back into normal mode 
 
 		else {
 
@@ -1522,10 +1513,6 @@ void ofApp::keyPressed(int key) {
 
 	}
 
-	if (key = OF_KEY_LEFT_ALT) {
-
-		
-	}
 }
 	
 
@@ -1538,9 +1525,12 @@ void ofApp::keyReleased(int key) {
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {
 
+	// Keeps track of mouse movements in the earth view to see if it lands on an audio source on the earth map 
+
 	for (int i = 0; i < pixel_pos.size(); i++) {
 
 		
+		// If it lands on a recorded audio on the earth map 
 		if (sqrt(pow(x - pixel_pos[i].x, 2) + pow(y - pixel_pos[i].y, 2)) < 10) {
 			
 			mouse_hover[i] = true;
@@ -1559,6 +1549,9 @@ void ofApp::mouseMoved(int x, int y) {
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button) {
 
+	// If earth view is on , just activate drag events related to the listener .
+	// If earth view if off, react to the drag events related to the midi note icons, listener and the ambient environment  
+
 	if (!is_earth_simulation_playing) {
 		
 		normal_view_drag_events(x,y);
@@ -1567,6 +1560,7 @@ void ofApp::mouseDragged(int x, int y, int button) {
 
 	else {
 
+		
 		if (sqrt(pow(point_listener.x - x, 2) + pow(point_listener.y - y, 2)) <= listener_radius + 80) {
 
 			point_listener.x = x;
@@ -1583,7 +1577,10 @@ void ofApp::mouseDragged(int x, int y, int button) {
 void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 	
 
+
 	if (!is_earth_simulation_playing) {
+
+		// Switches between the mic on and mic off icons 
 
 		if (mouse.x >= 0 && mouse.x <= border_len && mouse.y >= 0 && mouse.y <= border_len) {
 
@@ -1593,7 +1590,7 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 				draw_mic_off = false;
 				draw_mic_on = true;
-				is_mic_on = true;
+				is_mic_on = true; // Turns on the mic 
 
 
 
@@ -1604,13 +1601,20 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 				draw_mic_off = true;
 				draw_mic_on = false;
-				is_mic_on = false;
+				is_mic_on = false; // Turns off the mic 
 
 			}
 
 
 		}
 
+
+		/* 
+			If mouse is pressed over this reverb video region in the GUI actitivate that reverb for the 3D audio scene and deactivate all the other active reverbs , also play
+			that reverb video to show visually that its active.
+		*/
+
+		// Checks for the First Reverb ( St Peters Basilica)
 		if (mouse.x >= ofGetScreenWidth() - 600 && mouse.x <= ofGetScreenWidth() - 600 + 300 && mouse.y >= ofGetScreenHeight() - 400 && mouse.y <= ofGetScreenHeight() - 400 + 200) {
 
 			create_sounds.which_effect(0);
@@ -1619,7 +1623,7 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 			ambient_environment_videos[0].setPaused(false);
 			ambient_environment_videos[0].play();
 			 
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 
 				if(i!=0)
 				 ambient_environment_videos[i].setPaused(true);
@@ -1628,6 +1632,8 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 			
 
 		}
+
+		// Checks for the Second Reverb (Underwater )
 
 		else if (mouse.x > ofGetScreenWidth() - 600 + 300 && mouse.x <= ofGetScreenWidth() - 600 + 600 && mouse.y >= ofGetScreenHeight() - 400 && mouse.y <= ofGetScreenHeight() - 400 + 200) {
 
@@ -1638,7 +1644,7 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 			ambient_environment_videos[1].setPaused(false);
 			ambient_environment_videos[1].play();
 
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 
 				if (i != 1)
 					ambient_environment_videos[i].setPaused(true);
@@ -1646,6 +1652,8 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 
 		}
+
+		// Checks for the Thrid Reverb (Auditorium)
 
 		else if (mouse.x > ofGetScreenWidth() - 600 && mouse.x <= ofGetScreenWidth() - 600 + 300 && mouse.y >= ofGetScreenHeight() - 400 + 200 && mouse.y <= ofGetScreenHeight() - 400 + 400) {
 
@@ -1656,7 +1664,7 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 			ambient_environment_videos[2].setPaused(false);
 			ambient_environment_videos[2].play();
 
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 
 				if (i != 2)
 					ambient_environment_videos[i].setPaused(true);
@@ -1666,6 +1674,7 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 		}
 
 
+		// Checks for the Fourth Reverb (Psychotic)
 
 		else   if (mouse.x >= ofGetScreenWidth() - 600 + 300 && mouse.x <= ofGetScreenWidth() - 600 + 600 && mouse.y >= ofGetScreenHeight() - 400 + 200 && mouse.y <= ofGetScreenHeight() - 400 + 400) {
 
@@ -1673,16 +1682,16 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 			add_effect_real_time(4);
 
+			ambient_environment_videos[3].setPaused(false);
+			ambient_environment_videos[3].play();
+
+			for (int i = 0; i < 4; i++) {
+
+				if (i != 3)
+					ambient_environment_videos[i].setPaused(true);
+			}
+
 		}
-
-	}
-
-
-
-	else {
-
-		create_earth_view_points(mouse.x, mouse.y);
-		cout << " Entered view point Creation" << endl;
 
 	}
 
@@ -1693,6 +1702,8 @@ void ofApp::mousePressed(ofMouseEventArgs &mouse) {
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {
+	
+	is_midi_instrument_drag_event = false; 
 
 }
 
