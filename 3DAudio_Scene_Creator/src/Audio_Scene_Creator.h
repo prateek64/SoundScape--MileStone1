@@ -79,7 +79,6 @@ public:
 	void move_song();
 	void LoadEffect(const EFXEAXREVERBPROPERTIES *rev, int effect_num);
 	void add_effects();
-	void remove_effects();
 	void add_real_time_effects();
 	void reverb_array();
 	void real_time_reverb_array();
@@ -92,56 +91,58 @@ public:
 	void add_doppler_effect(int speed_of_sound, int doppler_effect);
 
 	void file_names();
-	void files_drumkit();
+	void files_sound_sources();
 	void play_a_source(int which_source);
 
 	void pitch_shifting(int val);
 	void change_gain(int which_source, int val);
 	void delete_earth_point_sources();
-	void delete_all();
+
 
 	~Audio_Scene_Creator();
 
+
 	bool done = false;
 	bool set_gain_zero = false;
-	double X_real_time;
-	double Y_real_time;
-	double Z_real_time;
-	double real_time_pitch = 1;
+	double X_real_time; // Real time audio mic input sound source x position  
+	double Y_real_time; // Real time audio mic input sound source y position
+	double Z_real_time; // Real time audio mic input sound source z position
+
+	double real_time_pitch = 1; // Real time audio input sound source initial pitch 
 	bool real_time_effect = false;
 	int which_real_time_reverb;
 
-	string names[28];
+	string names[28]; // Array to store audio file names 
 
 private:
 
 	int sample_rate;
-	int X_source, Y_source, Z_source;
-	int source_counter = 0;
-	int listener_x, listener_y, listener_z;
+	int source_counter = 0; // Keeps count of of the sound sources being rendered in 3D 
+	int listener_x, listener_y, listener_z; // Listener location parameters 
 
 	
-	ALuint source[28];
-	ALuint buffer[28];
+	ALuint source[28]; // Source array for synthetic sources 
+	ALuint buffer[28]; // Buffer array for synethtic sources
 	ALuint real_time_buffer;
 	ALuint real_time_source;
-	ALuint slot[8];
-	ALCdevice* device[2];
+	ALuint slot[8]; // Slot array for reverb effects 
+	ALCdevice* device[2]; // Device array for 
 	ALCcontext* context;
-	int subx, suby, subz;
+	int subx, suby, subz; 
 	int loc_change = 0;
-	double max_pitch_shift = 4.0;
-	double max_gain = 7;
+	double max_pitch_shift = 4.0; // Maximum Gain 
+	double max_gain = 7; // Maximum Pitch Shift Factor 
+
 	string base_folder = "../bin/data/Sounds/";
 	
 
-	ALuint helloBuffer[10], helloSource[1];
+	ALuint helloBuffer[10], helloSource[1]; // Real time mic input audio source buffer and source array 
 	
 
-	EFXEAXREVERBPROPERTIES reverb[4];
-	EFXEAXREVERBPROPERTIES  real_time_reverb[4];
+	EFXEAXREVERBPROPERTIES reverb[4]; // Reverb effect array to be used with synthetic sources 
+	EFXEAXREVERBPROPERTIES  real_time_reverb[4]; // Reverb effect array to be used with real time mic input sound source 
 	ALenum state;
-	ALuint effect[8] = {0, 0, 0, 0, 0, 0, 0 ,0,};
+	ALuint effect[8] = {0, 0, 0, 0, 0, 0, 0 ,0,}; // Effect array which will be linked to one or more reverbs 
 
 
 	// Variables for Real Time Audio Processing

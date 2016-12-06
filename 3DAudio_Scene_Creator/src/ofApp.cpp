@@ -120,9 +120,9 @@ void ofApp::setup() {
 	verdana14.setLetterSpacing(1.037);
 
 
-//	welcome.setSpeed(1.2);
-//	welcome.setVolume(0.4);
-//	welcome.play();
+	welcome.setSpeed(0.8);
+	welcome.setVolume(0.4);
+	welcome.play();
 	
 	
 }
@@ -392,6 +392,7 @@ void ofApp::draw_ambient_listener(int radius, int anim_shape,double sine_pct, in
 
 		circle_cos.addVertex(ofPoint(x, y));
 
+ 
 
 		//increment a wave angle to flip the wave
 
@@ -713,6 +714,7 @@ void ofApp::play_midi_drumkit() {
 }
 
 
+
 // Method that gets called whenever there is a MIDI message input 
 
 void ofApp::newMidiMessage(ofxMidiMessage& msg) {
@@ -933,7 +935,7 @@ void ofApp::draw_earth_view_points(double radius) {
 	double old_point_x = radius, old_point_y = 3;
 	double new_point_x, new_point_y;
 	double angle; 
-	ofSetLineWidth(7);
+	ofSetLineWidth(10);
 
 	for (int i = 0; i < 40; i++) {
 

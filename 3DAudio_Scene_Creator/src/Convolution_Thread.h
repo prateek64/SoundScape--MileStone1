@@ -1,3 +1,5 @@
+// This class acts as a parallel thread that handles real time mic input convolution with EFX reverbs effects  
+
 #pragma once
 
 #include "ofThread.h"
@@ -7,6 +9,9 @@ class Convolution_Thread : public ofThread {
 
 
 public:
+
+
+	// Method to change the pitch of the real time mic input sound source 
 
 	void change_pitch(double pitch) {
 
@@ -26,6 +31,9 @@ public:
 
 	}
 
+
+	// Method to set the position of the real time mic input sound source in the 3D audio scene 
+
 	void setpos(double X, double Y, double Z) {
 
 		create_sound.X_real_time = X;
@@ -33,6 +41,9 @@ public:
 		create_sound.Z_real_time = Z;
 
 	}
+
+
+	// Method to set the real time reverb effect 
 
 	void set_real_time_effect(int val) {
 
@@ -42,6 +53,8 @@ public:
 	}
 
 
+	// Method that sets the real time audio processing to done 
+
 	void setdone_true() {
 
 
@@ -49,6 +62,9 @@ public:
 
 
 	}
+
+
+	// Method that sets the real time audio processing to not done 
 
 	void setdone_false() {
 
@@ -58,6 +74,7 @@ public:
 	}
 
 	
+	// Function that is called when the thread is started from the main thread 
 
 	void threadedFunction() {
 
@@ -70,11 +87,15 @@ public:
 
 	}
 
+
+	// Method that initializes the real time reverb effects and related parameters 
+
 	void real_time_effect_init() {
 
 		create_sound.real_time_reverb_array();
 		create_sound.add_real_time_effects();
 	}
+
 
 private:
 

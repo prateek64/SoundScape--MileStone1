@@ -3,6 +3,8 @@
 #include<string>
 
 using namespace std;
+
+// Class constructor 
 Audio_Scene_Creator::Audio_Scene_Creator()
 {
 
@@ -30,21 +32,25 @@ Audio_Scene_Creator::Audio_Scene_Creator()
 
 	}
 
-	source_counter = 0;
-
+	source_counter = 0; 
 	subx = suby = subz = 10;
-	file_names();
+
+	file_names(); // Initializes the sound source files 
+
+	// Initializes the listener location 
 	listener_x = 0;
 	listener_y = 0;
 	listener_z = 0;
 	
-	real_time_reverb_array();
-	add_real_time_effects();
+	real_time_reverb_array(); // Initializes the real time reverbs with certain reverb arrays 
+	add_real_time_effects(); // Initializes the real time effect parameters 
 }
 
 
 Audio_Scene_Creator::~Audio_Scene_Creator()
 {
+	// Deletes all the sound sources and buffers 
+
 	for (int i = 0; i < source_counter; i++) {
 
 		alDeleteSources(1, &source[i]);
@@ -53,20 +59,17 @@ Audio_Scene_Creator::~Audio_Scene_Creator()
 
 	alcDestroyContext(context);
 	
+	// Closes all the devices 
+
 	for (int i = 0; i < 1; i++) {
 
 		alcCloseDevice(device[i]);
 	}
 
-/*	for (int i = 0; i < 3; i++) {
 
-		alDeleteAuxiliaryEffectSlots(1, &slot[i]);
-		alDeleteEffects(1, &effect[i]);
-		cout << "Deleted Effects" << endl;
-	}  */
 }
 
-
+// Method that deletes all the earth view sound sources 
 void Audio_Scene_Creator::delete_earth_point_sources() {
 
 
@@ -76,7 +79,11 @@ void Audio_Scene_Creator::delete_earth_point_sources() {
 		alDeleteBuffers(1, &buffer[i]);
 
 	}
+
+	source_counter = 17;
 }
+
+// Method that initializes the listener location in the 3D audio scene 
 
 void Audio_Scene_Creator::listner_location() {
 
@@ -91,6 +98,8 @@ void Audio_Scene_Creator::listner_location() {
 
 
 }
+
+// Method to load the audio files into buffers 
 
 void* Audio_Scene_Creator::load_file(const char *fname, long *bufsize) {
 
@@ -109,6 +118,7 @@ void* Audio_Scene_Creator::load_file(const char *fname, long *bufsize) {
 }
 
 
+// Method to add doppler effect to the scene 
 
 void Audio_Scene_Creator::add_doppler_effect(int speed_of_sound, int doppler_effect) {
 
@@ -119,6 +129,8 @@ void Audio_Scene_Creator::add_doppler_effect(int speed_of_sound, int doppler_eff
 
 }
 
+// Method to change the gain of the sound sources 
+
 void Audio_Scene_Creator::change_gain(int which_source, int val) {
 
 
@@ -128,6 +140,8 @@ void Audio_Scene_Creator::change_gain(int which_source, int val) {
 
 
 }
+
+// Method to pitch shift the sound sources 
 
 void Audio_Scene_Creator::pitch_shifting(int val) {
 
@@ -150,6 +164,8 @@ void Audio_Scene_Creator::pitch_shifting(int val) {
 
 }
 
+// Method to move sources to new positions 
+
 void Audio_Scene_Creator::move_source(int Xpos , int Ypos , int Zpos, int which_source ) {
 
 	    
@@ -157,27 +173,30 @@ void Audio_Scene_Creator::move_source(int Xpos , int Ypos , int Zpos, int which_
 	
 
 }
+
+// Method to add sources to the 3D audio scene 
+
 void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_source) {
 
 	/* this will be the source of ghostly footsteps... */
 	
-	alGenSources(1, &source[which_source]);
+	alGenSources(1, &source[which_source]); // function to generate sources 
 	
 
-	alSourcef(source[which_source], AL_PITCH, 1);
+	alSourcef(source[which_source], AL_PITCH, 1); // function to set the pitch of the sound source 
 
 	
 	alSourcef(source[which_source], AL_GAIN, 1);
 	// alSource3f(source, AL_POSITION, curr[0], curr[1], curr[2]);
 
-	alSource3f(source[which_source], AL_POSITION, X, Y, Z);
+	alSource3f(source[which_source], AL_POSITION, X, Y, Z); // function to set the source position in the 3D audio scene 
 	alSource3f(source[which_source], AL_VELOCITY, 0., 0., 0.);
 	if (which_source < 17) {
 
 		alSourcei(source[which_source], AL_LOOPING, AL_FALSE);
-		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
+		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED); // Distance model for the sound sources 
 		alSourcef(source[which_source], AL_ROLLOFF_FACTOR, 13);
-		alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 500);
+		alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 500); 
 		alSourcef(source[which_source], AL_MAX_DISTANCE, 900);
 	}
 
@@ -185,9 +204,9 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 
 		alSourcei(source[which_source], AL_LOOPING, AL_TRUE);
 		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
-		alSourcef(source[which_source], AL_ROLLOFF_FACTOR, 7);
+		alSourcef(source[which_source], AL_ROLLOFF_FACTOR, 7); // Gain roll-off factor 
 		alSourcef(source[which_source], AL_REFERENCE_DISTANCE, 20);
-		alSourcef(source[which_source], AL_MAX_DISTANCE, 100);
+		alSourcef(source[which_source], AL_MAX_DISTANCE, 100); // Maximum distance to which you can hear the source 
 
 	}
 
@@ -216,6 +235,7 @@ void Audio_Scene_Creator::add_source(double X, double Y, double Z, int which_sou
 }
 
 
+// Method to initialize the reverb array with certain reverb effects 
 void Audio_Scene_Creator::reverb_array() {
 
 
@@ -224,6 +244,8 @@ void Audio_Scene_Creator::reverb_array() {
 	reverb[2] = EFX_REVERB_PRESET_AUDITORIUM;
 	reverb[3] = EFX_REVERB_PRESET_PSYCHOTIC;
 }
+
+// Method to initialize the real time reverb array with certain reverb effects (meant for the real time mic input sound source)
 
 void Audio_Scene_Creator::real_time_reverb_array() {
 
@@ -234,10 +256,7 @@ void Audio_Scene_Creator::real_time_reverb_array() {
 
 }
 
-void Audio_Scene_Creator::move_song() {
-
-
-}
+// Method that processes the real time mic input and renders the audio as a sound source in the 3D audio scene 
 
 void Audio_Scene_Creator::real_time_proc() {
 
@@ -337,13 +356,15 @@ void Audio_Scene_Creator::real_time_proc() {
 	   alcCloseDevice(device[1]);
 	   
 	   alSourceStopv(1, &helloSource[0]);
-	   alDeleteSources(1, &helloSource[0]);
-	   alDeleteBuffers(16, &helloBuffer[0]);
+	   alDeleteSources(1, &helloSource[0]);  // Delete real time mic input sound sources
+	   alDeleteBuffers(16, &helloBuffer[0]); // Delete real time mic input sound source buffers 
 	   cout << "Thread has ended" << endl;
 	   // Stop the sources
 	  
 
 } 
+
+// Method that assigns a specfic reverb effect to the sound sources
 
 void Audio_Scene_Creator::which_effect(int effect_number) {
 
@@ -355,6 +376,9 @@ void Audio_Scene_Creator::which_effect(int effect_number) {
 	}
 
 }
+
+// Method to move the listener to a given new location 
+
 void Audio_Scene_Creator::move_listener(int X, int Y, int Z) {
 
 
@@ -367,22 +391,25 @@ void Audio_Scene_Creator::move_listener(int X, int Y, int Z) {
 
 }
 
+// Function to load the all audio files 
+
 void Audio_Scene_Creator::file_names() {
 
 	
-	files_drumkit();
+	files_sound_sources();
 	
 }
 
+// Function to load the audio files that are associated with the earth view 
 
 void Audio_Scene_Creator::load_earth_point_files(string file_name, int which_source) {
 
 	names[which_source] = base_folder + "Geo_Tagged_Data/" + file_name;
 
-
 }
 
-void Audio_Scene_Creator::files_drumkit() {
+
+void Audio_Scene_Creator::files_sound_sources() {
 
 	names[0] = base_folder + "Drums/dope.aiff";
 	names[1] = base_folder + "Drums/bassdrum.aiff";
@@ -404,6 +431,8 @@ void Audio_Scene_Creator::files_drumkit() {
 
 }
 
+// Method to play a specific sound source 
+
 void Audio_Scene_Creator::play_a_source(int which_source) {
 
 
@@ -412,6 +441,7 @@ void Audio_Scene_Creator::play_a_source(int which_source) {
 
 }
 
+// Method to load effects and its properties 
 void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *rev, int effect_num) {
 
 
@@ -490,6 +520,7 @@ void Audio_Scene_Creator::LoadEffect(const EFXEAXREVERBPROPERTIES *rev, int effe
 
 }
 
+// Method to attach effects to auxiliary effect slots 
 
 void Audio_Scene_Creator::add_effects() {
 
@@ -512,10 +543,10 @@ void Audio_Scene_Creator::add_effects() {
 
 	}
 
-	
 
 }
 
+// Method to attach a real time effect to auxiliary effect slots 
 
 void Audio_Scene_Creator::add_real_time_effects() {
 
@@ -540,6 +571,8 @@ void Audio_Scene_Creator::add_real_time_effects() {
 
 
 }
+
+// Method to get addresses for certain efx effect related processes 
 
 void Audio_Scene_Creator::get_process_address() {
 

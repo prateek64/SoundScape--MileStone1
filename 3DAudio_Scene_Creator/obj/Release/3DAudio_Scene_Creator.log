@@ -1,11 +1,4 @@
-﻿  ofApp.cpp
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(320): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(325): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(969): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(970): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(971): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\pmurgai\Desktop\Quarter-1\256A\of_v0.9.6_vs_release\libs\openFrameworks\math\ofMatrix4x4.h(972): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-     Creating library bin\3DAudio_Scene_Creator.lib and object bin\3DAudio_Scene_Creator.exp
+﻿     Creating library bin\3DAudio_Scene_Creator.lib and object bin\3DAudio_Scene_Creator.exp
   LINK : /LTCG specified but no code generation required; remove /LTCG from the link command line to improve linker performance
   3DAudio_Scene_Creator.vcxproj -> C:\Users\pmurgai\Desktop\Quarter-1\256A\Final_Project\3DAudio_Scene_Creator\bin\3DAudio_Scene_Creator.exe
   
