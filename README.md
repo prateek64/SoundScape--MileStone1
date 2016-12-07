@@ -1,5 +1,19 @@
-# SoundScape--MileStone1
-This is my first milestone for my final project. (REQUIRES HEADPHONES)
+# The SoundScape 
+
+This is my Music 256A final project . The explanation of the project has been divided into the following five parts :- 
+
+1. Introduction and Motivation 
+
+2. Application Components 
+
+3. Software Components 
+
+4. Setting up the project on your system 
+
+5. Resources 
+
+
+# 1. Introduction 
 
 I am exploring the creation of soundscapes ( rendering 3D audio ) using HRTF's on headphones. Currently I am using the following addons/libraries:
 
@@ -25,9 +39,3 @@ Some Features of the current system :
 
 5. You can pitch shift each midi note using a midi control knob.(void Audio_Scene_Creator::pitch_shifting(int val))
 
-Coming Up 
-
-1. Granular Synthesis and some real time FM synthesis
-2. A new view which explores ambient sound sources around us ( rain, wind, thunder etc.) in different locations in 3D ( maybe different locations on the earth). 
-
-3. Better Graphics for each view
