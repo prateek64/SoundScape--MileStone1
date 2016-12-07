@@ -1,6 +1,6 @@
 # The SoundScape 
 
-This is my Music 256A final project . The explanation of the project has been divided into the following five parts :- 
+This is my Music 256A final project (I call it the SoundScape) . The explanation of the project has been divided into the following five parts :- 
 
 1. Introduction and Motivation 
 
@@ -14,6 +14,8 @@ This is my Music 256A final project . The explanation of the project has been di
 
 
 # 1. Introduction 
+
+When I heard the Virtual Barbershop(https://www.youtube.com/watch?v=IUDTlvagjJA)  for the first time four years ago (which employs HRTF's and spatialized audio rendering) it triggered my curiousity and imagination. The first time I heard it it blew my mind that our ears could like that but didn't get an opporrtunity . Rendering spatialized audio for headphones using HRTF's has always excited me and I felt this course gave me a perfect platform to build something 
 
 I am exploring the creation of soundscapes ( rendering 3D audio ) using HRTF's on headphones. Currently I am using the following addons/libraries:
 
