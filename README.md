@@ -95,7 +95,7 @@ My application has various software components, they are as follows :
        1. Good Read: https://inst.eecs.berkeley.edu/~ee123/sp16/docs/FastConv.pdf 
        2. Github Repo's : https://github.com/jeremyfix/FFTConvolution , https://github.com/hgomersall/SSE-convolution
    
-
+     f. EFX effects Extension for OpenAL guide : http://kcat.strangesoft.net/misc-downloads/Effects%20Extension%20Guide.pdf
 
 # Conclusion and Future Work 
 
