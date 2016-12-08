@@ -19,8 +19,10 @@ When I heard the Virtual Barbershop(https://www.youtube.com/watch?v=IUDTlvagjJA)
 Rendering spatialized audio for headphones using HRTF's has always excited me and I felt this course gave me a perfect platform to build something on the lines of rendering HRTF convolved audio and spatialized audio.
 
 <figure>
+   <center> 
     <img src="Normal_View.png" alt="Normal View Mode" style="width:304px;height:228px;"/>
-   <center> <figcaption>Normal View Mode</figcaption></center>
+   <figcaption>Normal View Mode</figcaption>
+   </center>
 </figure>
 
 
