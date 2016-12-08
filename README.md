@@ -80,6 +80,10 @@ My application has various software components, they are as follows :
   
      g. Audio input and Output callback functions 
   
+ 
+# 4. Steps For Compilation 
+
+
   
 # 5. Resources 
   
