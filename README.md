@@ -18,6 +18,8 @@ This is my Music 256A final project (I call it the SoundScape) . The explanation
 When I heard the Virtual Barbershop(https://www.youtube.com/watch?v=IUDTlvagjJA)  for the first time six years ago (which employs HRTF's and spatialized audio rendering) it triggered my curiousity and imagination. The first time I heard it I was blown away by the fact that our ears could be employed in this way to fake 3D positions of audio sources. 
 Rendering spatialized audio for headphones using HRTF's has always excited me and I felt this course gave me a perfect platform to build something on the lines of rendering HRTF convolved audio and spatialized audio.
 
+My application aims at creating different soundscapes within a single screen so that the listener can experience different acoustic spaces (both synthetic and ambient) within the same restricted area. The components and the different soundscapes are explained in the following part. 
+
 <figure>
    <center> 
    <figcaption>Normal View Mode</figcaption>
@@ -26,9 +28,6 @@ Rendering spatialized audio for headphones using HRTF's has always excited me an
    </center>
 </figure>
 
-p {
-    margin-bottom: 3cm;
-}
 
 <figure>
    <center> 
@@ -38,8 +37,6 @@ p {
    </center>
 </figure>
 
-
-My application aims at creating different soundscapes within a single screen so that the listener can experience different acoustic spaces (both synthetic and ambient) within the same restricted area. The components and the different soundscapes are explained in the following part. 
 
 The abstractness of the user interface reflects my thoguhts, my love for what I do, my past experiences and everything I appreciate in this world. 
 
