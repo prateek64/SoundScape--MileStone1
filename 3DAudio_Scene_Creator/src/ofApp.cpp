@@ -120,7 +120,7 @@ void ofApp::setup() {
 	verdana14.setLetterSpacing(1.037);
 
 
-	welcome.setSpeed(0.8);
+	welcome.setSpeed(0.6);
 	welcome.setVolume(0.4);
 	welcome.play();
 	
