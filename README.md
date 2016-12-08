@@ -91,13 +91,16 @@ My application has various software components, they are as follows :
    
    3. Once your OpenAL has been setup correctly we need to link it with your project in Visual Studios :
    
-          a. In your project properties go to C++ -> General -> Additional Include Directories and add the OpenAL include folder (for eg in my case I would add the following path : C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include\AL
+         a. In your project properties go to C++ -> General -> Additional Include Directories and add the OpenAL include folder (for eg in my case I would add the following path : C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include\
           
-          b.Go to Linker -> General -> Additional Library Directories  and add the path to the Win32 library folder ( for eg in my case I would add the following path: C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\libs\Win32
+         b.Go to Linker -> General -> Additional Library Directories  and add the path to the Win32 library folder ( for eg in my case I would add the following path: C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\libs\Win32
           
-          c. Go to Linker -> Input -> Additional Dependencies and add "OpenAL32.lib" . Save all these properties 
+         c. Go to Linker -> Input -> Additional Dependencies and add "OpenAL32.lib" . Save all these properties 
           
-          4. Download <a href= "https://github.com/danomatika/ofxMidi">ofxMIDI</a> addon to your openframeworks addon folder and using the project generator add ofxMIDI to your current project and update your project. 
+         d. Download <a href= "https://github.com/danomatika/ofxMidi">ofxMIDI</a> addon to your openframeworks addon folder and using the project generator add ofxMIDI to your current project and update your project. 
+          
+         e. That's it , it should work now. If you have any problems mail me the issues (prateekmurgai64@gmail.com)  
+          
    
    
 
