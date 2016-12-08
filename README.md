@@ -46,19 +46,19 @@ My application has various software components, they are as follows :
 
 <b> 1. Audio Scene Creator class : </b> This clas handles the 3D rendering and the HRTF convolution of the audio. It provides the following functions:- 
 
-   a. Moving the sound sources around in the 3D using an input X,Y,Z position with respect to a origin.
+    a. Moving the sound sources around in the 3D using an input X,Y,Z position with respect to a origin.
   
-   b. Adding new sources to the 3D audio scene.
+    b. Adding new sources to the 3D audio scene.
   
-   c. Add doppler effect to the moving sources.
+    c. Add doppler effect to the moving sources.
   
-   d. Play the sources and stop the sources.
+    d. Play the sources and stop the sources.
   
-   e. Add reverb effects to the synthetic and real time mic ambient environment.
+    e. Add reverb effects to the synthetic and real time mic ambient environment.
   
-   f. Change the gain and pitch of the sound sources 
+    f. Change the gain and pitch of the sound sources 
   
-   g. Move the listener around in the 3D audio scene around the head 
+    g. Move the listener around in the 3D audio scene around the head 
   
 
 <b> 2. Convolution Thread Class :- </b> This class performs the fast convolution that renders the real time reverb for the ambient environment ( the real time mic input). This is a parallel thread ( ofThread() openframeworks ) that runs parallel to the main thread to perform the low latency convolution for the real time mic input. A separate thread was made for this purpose as the convolution can be a slower process( even though a fast low latency implementation) and can block the faster graphics rate of the main thread. 
@@ -66,34 +66,34 @@ My application has various software components, they are as follows :
  
 <b> 3. OfApp Class:- </b> This class handles the main chunk of the application features. I see this as a central class to which everything is connected. It provides the following functions :-
  
-  a. GUI display and updating the graphical elements of the application 
+   a. GUI display and updating the graphical elements of the application 
   
-  b. Mouse and Key events 
+   b. Mouse and Key events 
   
-  c. MIDI note events 
+   c. MIDI note events 
   
-  d. Image and Video loading 
+   d. Image and Video loading 
   
-  e. Initialization of the Convolution and Audio Scene Creator class 
+   e. Initialization of the Convolution and Audio Scene Creator class 
   
-  f. Calling the Audio Scene Creator and Convolution thread functions 
+   f. Calling the Audio Scene Creator and Convolution thread functions 
   
-  g. Audio input and Output callback functions 
+   g. Audio input and Output callback functions 
   
   
  # 5. Resources 
   
-a. OpenAL Soft (https://github.com/kcat/openal-soft) : A great API that I have employed for the HRTF rendering and getting some reverb effects to work 
+  a. OpenAL Soft (https://github.com/kcat/openal-soft) : A great API that I have employed for the HRTF rendering and getting some reverb effects to work 
 
-b. OpenAL (https://www.openal.org/) : The original OpenAL API that doesn't support HRTFs but gives you a detailed description about the functionality of the API and its functions.
+  b. OpenAL (https://www.openal.org/) : The original OpenAL API that doesn't support HRTFs but gives you a detailed description about the functionality of the API and its functions.
 
-c. ofxMIDI (https://github.com/danomatika/ofxMidi) : The openframeworks MIDI addon that I employed to 
+  c. ofxMIDI (https://github.com/danomatika/ofxMidi) : The openframeworks MIDI addon that I employed to 
 
-d. HRTF's from IRCAM  (http://recherche.ircam.fr/equipes/salles/listen/) : The pool of HRTF's from which I picked up the ones that suited my head( by listening to all of them ) and used for 3D rendering . 
+  d. HRTF's from IRCAM  (http://recherche.ircam.fr/equipes/salles/listen/) : The pool of HRTF's from which I picked up the ones that  suited my head( by listening to all of them ) and used for 3D rendering . 
 
-e. Fast Convolution : 
-   1. Good Read: https://inst.eecs.berkeley.edu/~ee123/sp16/docs/FastConv.pdf 
-   2. Github Repo's : https://github.com/jeremyfix/FFTConvolution , https://github.com/hgomersall/SSE-convolution
+  e. Fast Convolution : 
+     1. Good Read: https://inst.eecs.berkeley.edu/~ee123/sp16/docs/FastConv.pdf 
+     2. Github Repo's : https://github.com/jeremyfix/FFTConvolution , https://github.com/hgomersall/SSE-convolution
    
 
 
