@@ -22,7 +22,7 @@ My application aims at creating different soundscapes within a single screen so 
 
 The abstractness of the user interface reflects my thoguhts, my love for what I do, my past experiences and everything I appreciate in this world. 
 
-# 2. Application components 
+# 2. Application Components 
 
   <b> 1. The Spatialized MIDI playing area :- </b> This soundscape lets the user play the MIDI notes and instruments in the 3D audio scene that I have created in my application. Each note is depicted using a graphic (a bokeh in this case) and can be moved around in the GUI (works best with a touch screen). The device screen lets the user move the notes in the Z and X axis . Y axis displacement is randomly selected within a small range ( negative to positive values on the y-axis ). 
 
@@ -81,7 +81,7 @@ My application has various software components, they are as follows :
      g. Audio input and Output callback functions 
   
   
- # 5. Resources 
+# 5. Resources 
   
      a. OpenAL Soft (https://github.com/kcat/openal-soft) : A great API that I have employed for the HRTF rendering and getting some reverb effects to work 
 
