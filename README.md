@@ -24,6 +24,8 @@ The abstractness of the user interface reflects my thoguhts, my love for what I 
 
 # 2. Application Components 
 
+Before I dive into the components, I just want to inform that the majority of the project has been developed using OpenFrameworks and its addons, OpenAL Soft and the OpenAL EFX extension.
+
   <b> 1. The Spatialized MIDI playing area :- </b> This soundscape lets the user play the MIDI notes and instruments in the 3D audio scene that I have created in my application. Each note is depicted using a graphic (a bokeh in this case) and can be moved around in the GUI (works best with a touch screen). The device screen lets the user move the notes in the Z and X axis . Y axis displacement is randomly selected within a small range ( negative to positive values on the y-axis ). 
 
  <b> 2. Ambient World Soundscape : - </b> This soundscape lets the user move everything the mic hears from the outside world in the 3D audio scene that we have created in our application. If the headphones provide decent noise cancellation, moving the ambient environment around you in the 3D sound field around your head sounds really interesting 
@@ -81,9 +83,24 @@ My application has various software components, they are as follows :
      g. Audio input and Output callback functions 
   
  
-# 4. Steps For Compilation 
+# 4. Steps For Compilation ( Currently for Visual Studios ) 
 
    1. Install <a href = "http://kcat.strangesoft.net/openal.html">OpenAL Soft</a> or get it from source : <a href="https://github.com/kcat/openal-soft">OpenAL_GitHub. 
+   
+   2. To configure OpenAL to use HRTF follow  <a href = "http://kcat.strangesoft.net/openal.html">these steps</a>very carefully.
+   
+   3. Once your OpenAL has been setup correctly we need to link it with your project in Visual Studios :
+   
+          a. In your project properties go to C++ -> General -> Additional Include Directories and add the OpenAL include folder (for eg in my case I would add the following path : C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include\AL
+          
+          b.Go to Linker -> General -> Additional Library Directories  and add the path to the Win32 library folder ( for eg in my case I would add the following path: C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\libs\Win32
+          
+          c. Go to Linker -> Input -> Additional Dependencies and add "OpenAL32.lib" . Save all these properties 
+          
+          4. Download <a href= "https://github.com/danomatika/ofxMidi">ofxMIDI</a> addon to your openframeworks addon folder and using the project generator add ofxMIDI to your current project and update your project. 
+   
+   
+
   
 # 5. Resources 
   
