@@ -38,7 +38,7 @@ My application aims at creating different soundscapes within a single screen so 
 </figure>
 
 
-The abstractness of the user interface reflects my thoguhts, my love for what I do, my past experiences and everything I appreciate in this world. 
+The abstractness of the user interface reflects my thoughts, my love for what I do, my past experiences and everything I appreciate in this world. 
 
 # 2. Application Components 
 
