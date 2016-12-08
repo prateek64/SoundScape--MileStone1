@@ -89,7 +89,7 @@ My application has various software components, they are as follows :
    
    2. To configure OpenAL to use HRTF follow  <a href = "http://www.bitoutsidethebox.com/shabda/hrtf-info/">these steps</a> very carefully.
    
-  3. Once your OpenAL has been setup correctly we need to link it with your project in Visual Studios :
+   3. Once your OpenAL has been setup correctly we need to link it with your project in Visual Studios :
    
         a. In your project properties go to C++ -> General -> Additional Include Directories and add the OpenAL include folder (for eg in my case I would add the following path : C:\Users\pmurgai\Desktop\Quarter-1\256A\openal-soft-1.17.2-bin\include\
           
