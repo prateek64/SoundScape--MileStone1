@@ -26,6 +26,18 @@ Rendering spatialized audio for headphones using HRTF's has always excited me an
    </center>
 </figure>
 
+p {
+    margin-bottom: 3cm;
+}
+
+<figure>
+   <center> 
+   <figcaption>Earth View Mode</figcaption>
+   
+    <img src="Earth_View.png" alt="Normal View Mode" style="width:304px;height:228px;"/>
+   </center>
+</figure>
+
 
 My application aims at creating different soundscapes within a single screen so that the listener can experience different acoustic spaces (both synthetic and ambient) within the same restricted area. The components and the different soundscapes are explained in the following part. 
 
