@@ -20,8 +20,9 @@ Rendering spatialized audio for headphones using HRTF's has always excited me an
 
 <figure>
    <center> 
-    <img src="Normal_View.png" alt="Normal View Mode" style="width:304px;height:228px;"/>
    <figcaption>Normal View Mode</figcaption>
+   
+    <img src="Normal_View.png" alt="Normal View Mode" style="width:304px;height:228px;"/>
    </center>
 </figure>
 
