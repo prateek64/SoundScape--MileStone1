@@ -40,6 +40,26 @@ The abstractness of the user interface reflects my thoguhts, my love for what I 
 
 # 3 Software Components : 
 
+My application has various software components, they are as follows : 
+
+1. Audio Scene Creator class : This clas handles the 3D rendering and the HRTF convolution of the audio. It provides the following functions:- 
+
+  a. Moving the sound sources around in the 3D using an input X,Y,Z position with respect to a origin.
+  
+  b. Adding new sources to the 3D audio scene.
+  
+  c. Add doppler effect to the moving sources.
+  
+  d. Play the sources and stop the sources.
+  
+  e. Add reverb effects to the synthetic and real time mic ambient environment.
+  
+  f. Change the gain and pitch of the sound sources 
+  
+  g. Move the listener around in the 3D audio scene around the head 
+  
+
+2. Convolution Thread Class : This class performs the fast convolution that renders the real time reverb for the ambient environment ( the real time mic input). This is a parallel thread ( ofThread() openframeworks ) that runs parallel to the main thread to perform the low latency convolution to 
 
 
 a. OpenAL SOft (https://github.com/kcat/openal-soft)
