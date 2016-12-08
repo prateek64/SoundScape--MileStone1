@@ -2,15 +2,15 @@
 
 This is my Music 256A final project (I call it the SoundScape) . The explanation of the project has been divided into the following five parts :- 
 
-   <b>  1. Introduction and Motivation </b>
+   <b> 1. Introduction and Motivation </b>
 
-    <b> 2. Application Components  </b>
+   <b> 2. Application Components  </b>
 
-    <b> 3. Software Components </b>
+   <b> 3. Software Components </b>
 
-    <b> 4. Setting up the project on your system </b>
+   <b> 4. Setting up the project on your system </b>
 
-    <b> 5. Resources </b>
+   <b> 5. Resources </b>
 
 
 # 1. Introduction and Motivation
