@@ -2,7 +2,7 @@
 
 This is my Music 256A final project (I call it the SoundScape) . The explanation of the project has been divided into the following five parts :- 
 
-    <b> 1. Introduction and Motivation </b>
+   <b>  1. Introduction and Motivation </b>
 
     <b> 2. Application Components  </b>
 
