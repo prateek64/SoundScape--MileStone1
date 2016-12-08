@@ -24,27 +24,27 @@ The abstractness of the user interface reflects my thoguhts, my love for what I 
 
 # 2. Application components 
 
- <b> 1. The Spatialized MIDI playing area :- </b> This soundscape lets the user play the MIDI notes and instruments in the 3D audio scene that I have created in my application. Each note is depicted using a graphic (a bokeh in this case) and can be moved around in the GUI (works best with a touch screen). The device screen lets the user move the notes in the Z and X axis . Y axis displacement is randomly selected within a small range ( negative to positive values on the y-axis ). 
+  <b> 1. The Spatialized MIDI playing area :- </b> This soundscape lets the user play the MIDI notes and instruments in the 3D audio scene that I have created in my application. Each note is depicted using a graphic (a bokeh in this case) and can be moved around in the GUI (works best with a touch screen). The device screen lets the user move the notes in the Z and X axis . Y axis displacement is randomly selected within a small range ( negative to positive values on the y-axis ). 
 
-<b> 2. Ambient World Soundscape : - </b> This soundscape lets the user move everything the mic hears from the outside world in the 3D audio scene that we have created in our application. If the headphones provide decent noise cancellation, moving the ambient environment around you in the 3D sound field around your head sounds really interesting 
+ <b> 2. Ambient World Soundscape : - </b> This soundscape lets the user move everything the mic hears from the outside world in the 3D audio scene that we have created in our application. If the headphones provide decent noise cancellation, moving the ambient environment around you in the 3D sound field around your head sounds really interesting 
 
-<b> 3. Earth View SoundScape :- </b> This view provides a bigger soundscape by presenting a earth simulation with the geo-tagged audio recorded by a user around the globe being mapped onto the earth map. All these audio recordings are also getting spatialized using the same spatialization method. An audio file parser parses the audio files to get the latitude and longitude information and then maps these latitudes and longitudes onto the earth simulation 
+ <b> 3. Earth View SoundScape :- </b> This view provides a bigger soundscape by presenting a earth simulation with the geo-tagged audio recorded by a user around the globe being mapped onto the earth map. All these audio recordings are also getting spatialized using the same spatialization method. An audio file parser parses the audio files to get the latitude and longitude information and then maps these latitudes and longitudes onto the earth simulation 
 
-<b> 4. Listener SoundScape :-</b> Remember the listener has its own soundscape i.e the the listener has its own sound field which has to mingle with the sound field of the sources to actually experience the in 3D. Thus the listener in the application (depicted as an abstract alien) has to physically move to the different soundscapes to experience them. 
+ <b> 4. Listener SoundScape :-</b> Remember the listener has its own soundscape i.e the the listener has its own sound field which has to mingle with the sound field of the sources to actually experience the in 3D. Thus the listener in the application (depicted as an abstract alien) has to physically move to the different soundscapes to experience them. 
 
-<b> 5. Distance Models :-</b> I have employed an exponential model for the decay of the sound sources with the increasing distance from the listener. The sound levels remain constant within a specified radius and then the sound level dies out exponentially after the specified distance from the source. 
+ <b> 5. Distance Models :-</b> I have employed an exponential model for the decay of the sound sources with the increasing distance from the listener. The sound levels remain constant within a specified radius and then the sound level dies out exponentially after the specified distance from the source. 
 
-<b> 6. Real Time Reverb :- </b> The application gives you an option to add reverb from four different locations ( St. Peter's Basilica, an auditorium, underwater and a synthetic psychotic location). This lets you experience the soundscapes within different acoustic spaces from real and synthetic environments.
+ <b> 6. Real Time Reverb :- </b> The application gives you an option to add reverb from four different locations ( St. Peter's Basilica, an auditorium, underwater and a synthetic psychotic location). This lets you experience the soundscapes within different acoustic spaces from real and synthetic environments.
 
-<b> 7. Movement of soundscape :- </b> Each sound source, listener, ambient environment can be moved in the 3D audio space that is being created through my application. I guess the importance lies a lot on the position of the listener as that is how we hear whatever there is out in the environment. 
+ <b> 7. Movement of soundscape :- </b> Each sound source, listener, ambient environment can be moved in the 3D audio space that is being created through my application. I guess the importance lies a lot on the position of the listener as that is how we hear whatever there is out in the environment. 
  
-<b> 8. MIDI :- </b> As the application lets you play on a MIDI keyboard, the MIDI forms another important part of the application. 
+ <b> 8. MIDI :- </b> As the application lets you play on a MIDI keyboard, the MIDI forms another important part of the application. 
 
 # 3 Software Components  
 
 My application has various software components, they are as follows : 
 
-<b> 1. Audio Scene Creator class : </b> This clas handles the 3D rendering and the HRTF convolution of the audio. It provides the following   functions:- 
+<b> 1. Audio Scene Creator class : </b> This clas handles the 3D rendering and the HRTF convolution of the audio. It provides the following functions:- 
 
    a. Moving the sound sources around in the 3D using an input X,Y,Z position with respect to a origin.
   
