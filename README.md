@@ -80,28 +80,26 @@ My application has various software components, they are as follows :
   
   g. Audio input and Output callback functions 
   
-  h. 
+  
+ # 5. Resources 
+  
+a. OpenAL Soft (https://github.com/kcat/openal-soft) : A great API that I have employed for the HRTF rendering and getting some reverb effects to work 
+
+b. OpenAL (https://www.openal.org/) : The original OpenAL API that doesn't support HRTFs but gives you a detailed description about the functionality of the API and its functions.
+
+c. ofxMIDI (https://github.com/danomatika/ofxMidi) : The openframeworks MIDI addon that I employed to 
+
+d. HRTF's from IRCAM  (http://recherche.ircam.fr/equipes/salles/listen/) : The pool of HRTF's from which I picked up the ones that suited my head( by listening to all of them ) and used for 3D rendering . 
+
+e. Fast Convolution : 
+   1. Good Read: https://inst.eecs.berkeley.edu/~ee123/sp16/docs/FastConv.pdf 
+   2. Github Repo's : https://github.com/jeremyfix/FFTConvolution , https://github.com/hgomersall/SSE-convolution
+   
 
 
-a. OpenAL SOft (https://github.com/kcat/openal-soft)
+# Conclusion and Future Work 
 
-b. OpenAL (https://www.openal.org/)
 
-c. ofxMIDI (https://github.com/danomatika/ofxMidi)
-
-d. HRTF's from IRCAM  (http://recherche.ircam.fr/equipes/salles/listen/)
-
-Currently my system includes an alien visitor who is exploring the world of spatial audio. The GUI has different sound fields where the alien can enter and exit. The main feature is an aura which when you enter lets you play Midi notes in the 3D space around your head  ( while wearing your headphones). The alien can go to different locations and experience the Midi drum kit, move the notes in the 3D space and play them in real time. The alien can also use the mic input to randomly move the notes around his/her head (using input rms value).
-
-Some Features of the current system :
-
-1. User can add doppler effect by giving in the speed of sound and the doppler effect factor (Audio_Scene_Creator::add_doppler_effect(int speed_of_sound, int doppler_effect))
-
-2. The movement on the screen is replicated in the sound source positions in the headphones by real time HRTF convolution
-
-3. Listener position can change so you can experience audio from different locations.
-
-4. Mic input rms value can move the sources around in 3D. 
-
-5. You can pitch shift each midi note using a midi control knob.(void Audio_Scene_Creator::pitch_shifting(int val))
+I will be developing a less abstract version of this application for the iOS in the next one month so look out for that. Also for the earth view I will try to get as many geo-tagged audio recordings I can and then try to create a web version of the the earth view and put it out on my website 
+   
 
