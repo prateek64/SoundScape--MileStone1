@@ -83,7 +83,7 @@ My application has various software components, they are as follows :
  
 # 4. Steps For Compilation 
 
-
+   1. Install <a href = "http://kcat.strangesoft.net/openal.html">OpenAL Soft</a> or get it from source : <a href="https://github.com/kcat/openal-soft">OpenAL_GitHub. 
   
 # 5. Resources 
   
