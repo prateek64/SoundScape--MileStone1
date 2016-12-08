@@ -40,7 +40,7 @@ The abstractness of the user interface reflects my thoguhts, my love for what I 
  
  <b> 8. MIDI :- </b> As the application lets you play on a MIDI keyboard, the MIDI forms another important part of the application. 
 
-# 3 Software Components  
+# 3. Software Components  
 
 My application has various software components, they are as follows : 
 
