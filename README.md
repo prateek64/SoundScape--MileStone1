@@ -85,9 +85,9 @@ My application has various software components, they are as follows :
  
 # 4. Steps For Compilation ( Currently for Visual Studios ) 
 
-   1. Install <a href = "http://kcat.strangesoft.net/openal.html">OpenAL Soft</a> or get it from source : <a href="https://github.com/kcat/openal-soft">OpenAL_GitHub. 
+   1. Install <a href = "http://kcat.strangesoft.net/openal.html">OpenAL Soft</a> or get it from source : <a href="https://github.com/kcat/openal-soft">OpenAL_GitHub</a>. 
    
-   2. To configure OpenAL to use HRTF follow  <a href = "http://kcat.strangesoft.net/openal.html">these steps</a>very carefully.
+   2. To configure OpenAL to use HRTF follow  <a href = "http://www.bitoutsidethebox.com/shabda/hrtf-info/">these steps</a> very carefully.
    
    3. Once your OpenAL has been setup correctly we need to link it with your project in Visual Studios :
    
